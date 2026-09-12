@@ -137,5 +137,5 @@ function open(mod, id){
   window._flRefresh = refresh;
 }
 function refresh(){ if(window._flRefresh) { try{ window._flRefresh(); }catch(_){} } }
-window.FILEU = { open: open, addFiles: addFiles, storeOne: storeOne, fmtSize: fmtSize, MAX_INLINE: MAX_INLINE };
+window.FILEU = { open: open, addFiles: addFiles, storeOne: storeOne, compressImage: compressImage, fmtSize: fmtSize, MAX_INLINE: MAX_INLINE };
 })();

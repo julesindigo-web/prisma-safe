@@ -19,11 +19,18 @@ function fieldInput(f,val,rec){
   var h='<div class="fld" data-f="'+f.k+'"><label>'+esc(f.label)+req+'</label>';
   if(f.t==="textarea") h+='<textarea name="'+f.k+'">'+esc(v)+'</textarea>';
   else if(f.t==="select") h+='<select name="'+f.k+'">'+f.opts.map(function(o){return '<option '+(String(o)===String(v)?"selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';
+  else if(f.t==="photo") h+='<input type="file" data-ph="'+f.k+'" accept="image/*" multiple>';
   else h+='<input name="'+f.k+'" type="'+(f.t==="date"?"date":f.t==="number"?"number":"text")+'" value="'+esc(v)+'"'+(f.t==="number"?' min="0"':"")+'>';
   if(f.hint) h+='<div class="hint">'+esc(f.hint)+'</div>';
-  h+='<div class="err">Wajib diisi.</div></div>'; return h; }
+  h+='<div class="err">Wajib diisi.</div>';
+  if(f.t==="photo") h+='<div data-th="'+f.k+'" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>';
+  h+='</div>'; return h; }
 function readForm(modal,fields){ var obj={}, ok=true;
-  fields.forEach(function(f){ var el=modal.querySelector('[name="'+f.k+'"]'); var v=el?el.value:"";
+  fields.forEach(function(f){
+    if(f.t==="photo"){ var box=modal.querySelector('[data-f="'+f.k+'"]'); var arr=(box&&box._photos)?box._photos:[];
+      if(f.req&&!arr.length){ ok=false; if(box) box.classList.add("bad"); } else if(box) box.classList.remove("bad");
+      obj[f.k]=arr; return; }
+    var el=modal.querySelector('[name="'+f.k+'"]'); var v=el?el.value:"";
     if(f.t==="number") v=(v===""||v==null)?0:+v;
     if(f.req&&String(v).trim()===""){ ok=false; el.closest(".fld").classList.add("bad"); } else if(el) el.closest(".fld").classList.remove("bad");
     obj[f.k]=typeof v==="string"?v.trim():v; });
@@ -69,7 +76,10 @@ function renderModule(def){
   document.getElementById("pageSub").textContent=def.form+" • "+rows.length+" data";
 }
 function keepFocus(id){ var e=document.getElementById(id); if(e){ e.focus(); var v=e.value; e.value=""; e.value=v; } }
-function exportCols(def){ return def.cols.map(function(c){ return {label:c.label,get:function(r){return c.get?c.get(r):(r[c.k]==null?"":r[c.k]);}}; }); }
+function exportCols(def){ var cols=[{label:"ID",get:function(r){ return r.id||"-"; }}].concat(def.cols.map(function(c){ return {label:c.label,get:function(r){return c.get?c.get(r):(r[c.k]==null?"":r[c.k]);}}; }));
+  if(def.fields.some(function(f){ return f.t === "photo"; })) cols.push({label:"Foto",get:function(r){ var n=(r.foto||[]).length; return n ? n + " foto" : "-"; }});
+  cols.push({label:"Update",get:function(r){ if(!r._u) return "-"; try{ var d=new Date(r._u); return d.toLocaleDateString("id-ID") + " " + d.toLocaleTimeString("id-ID"); }catch(_){ return "-"; } }});
+  return cols; }
 function act(def,a,id){
   var need = (a==="add") ? "add" : (a==="edit" || a==="cek") ? "edit" : (a==="del") ? "del" : (a.indexOf("x:") === 0 ? "edit" : null);
   if(need && window.RBAC && !window.RBAC.can(need)){ toast(window.RBAC.deny(a === "del" ? "menghapus" : "mengubah") + " [modul " + def.title + "]", "err"); return; }
@@ -103,16 +113,37 @@ function formModal(def,rec){
   var nilai=m.querySelector('[name="nilai"]'), hasil=m.querySelector('[name="hasil"]');
   if(nilai&&hasil) nilai.addEventListener("input",function(){ var n=+nilai.value||0; hasil.value=n>=80?"Lulus":n>0?"Remedial":"Belum test"; });
   if(def.key==="ibpr"){ ["l0","s0","l1","s1"].forEach(function(k){ var el=m.querySelector('[name="'+k+'"]'); if(el) el.addEventListener("change",function(){ var r=readForm(m,def.fields).obj; m.querySelector(".mbody").insertAdjacentHTML("afterbegin",""); closeModal(); formModal(def,Object.assign({},rec,r)); }); }); }
+  def.fields.filter(function(f){ return f.t === "photo"; }).forEach(function(f){
+    var inp=m.querySelector('[data-ph="'+f.k+'"]'), th=m.querySelector('[data-th="'+f.k+'"]');
+    var fbox=m.querySelector('[data-f="'+f.k+'"]'); fbox._photos=((rec[f.k]||[]).slice(0,3));
+    var canPh=!window.RBAC||window.RBAC.can("edit");
+    if(inp&&!canPh) inp.style.display="none";
+    function drawPh(){ th.innerHTML=fbox._photos.map(function(d,i){
+      return '<span style="position:relative"><img src="'+d+'" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--inputbd)">'
+        + (canPh?'<button type="button" class="btn sm danger" data-r="'+i+'" style="position:absolute;top:-6px;right:-6px;padding:0 6px">×</button>':"")+'</span>'; }).join("");
+      th.querySelectorAll("[data-r]").forEach(function(b){ b.onclick=function(){ fbox._photos.splice(+b.dataset.r,1); drawPh(); }; }); }
+    if(inp) inp.addEventListener("change",function(e){
+      var files=Array.prototype.slice.call(e.target.files||[]).slice(0,Math.max(0,3-fbox._photos.length));
+      if(!files.length){ toast("Maksimal 3 foto.", "err"); return; }
+      (function next(i){ if(i>=files.length){ drawPh(); return; }
+        var ok1=function(d){ fbox._photos.push(d); next(i+1); }, no1=function(){ toast("Satu foto gagal dibaca.", "err"); next(i+1); };
+        if(window.FILEU&&window.FILEU.compressImage) window.FILEU.compressImage(files[i]).then(ok1,no1); else no1();
+      })(0); });
+    drawPh();
+  });
   m.querySelector("[data-ok]").onclick=function(){ var r=readForm(m,def.fields);
     if(!r.ok){ toast("Lengkapi kolom bertanda *.","err"); return; }
     if(typeof def.compute === "function"){ try{ if(def.compute(r.obj, m) === false) return; }catch(e){ toast("Gagal menghitung: " + e.message, "err"); return; } }
     Object.keys(rec).forEach(function(k){ if(!(k in r.obj)) r.obj[k] = rec[k]; });
+    try{ if(JSON.stringify(r.obj).length > 1572864){ toast("Data + foto melebihi ~1,5 MB — kurangi jumlah/ukuran foto.", "err"); return; } }catch(_){}
     r.obj.id=rec.id||PS.uid(def.key.slice(0,3).toUpperCase());
     if(def.key==="p2h"){ if(rec._cek) r.obj._cek=rec._cek; r.obj.rusak=r.obj.rusak||rec.rusak||""; }
     PS.put(def.key,r.obj); closeModal(); toast("Data tersimpan.","ok"); renderModule(def); };
 }
 function detailModal(def,r){ if(!r) return;
-  var kv=def.fields.filter(function(f){return f.k!=="rusak";}).map(function(f){return [f.label,fmtVal(f,r[f.k])];});
+  var kv=def.fields.filter(function(f){return f.k!=="rusak";}).map(function(f){
+    if(f.t==="photo") return [f.label, ((r[f.k]||[]).length ? r[f.k].length + " foto" : "—")];
+    return [f.label,fmtVal(f,r[f.k])]; });
   var extra="";
   if(def.key==="ibpr"){ var S0=window.PRISMA_SEED.riskMatrix, a=(+r.l0||0)*(+r.s0||0), b=(+r.l1||0)*(+r.s1||0);
     extra='<h3>Penilaian risiko (matriks 5×5)</h3><p>Awal: <b>'+a+' • '+S0.level(a)[0]+'</b> → Sisa: <b>'+b+' • '+S0.level(b)[0]+'</b></p>'; }
@@ -120,6 +151,9 @@ function detailModal(def,r){ if(!r) return;
     r._cek.map(function(c){return '<tr><td>'+esc(c[0])+'</td><td>'+(c[1]==="Baik"?'<span class="chip green">Baik</span>':'<span class="chip red">Rusak</span>')+'</td></tr>';}).join("")+'</tbody></table>'; }
   if(def.key==="induksi"&&r.nilai!==""&&r.nilai!=null) extra='<p>Status kelulusan: <b>'+(+r.nilai>=80?"LULUS (≥80)":"REMEDIAL (<80)")+'</b></p>';
   if((r._files||[]).length){ extra+='<h3>Berkas terlampir ('+r._files.length+')</h3><p>'+r._files.map(function(f){ return window.esc(f.name||"berkas"); }).join("; ")+'</p><p class="hint">Buka / unduh / kelola via tombol “Berkas” pada baris data.</p>'; }
+  def.fields.filter(function(f){ return f.t === "photo"; }).forEach(function(f){ var ph=r[f.k]||[];
+    if(ph.length) extra+='<h3>'+esc(f.label)+' ('+ph.length+')</h3>'+ph.map(function(d){
+      return '<a href="'+d+'" target="_blank" rel="noopener"><img src="'+d+'" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #c9d2e4;margin:0 8px 8px 0"></a>'; }).join(""); });
   var m=openModal(def.title+" — detail",'<dl class="detail">'+kv.map(function(k){return "<dt>"+esc(k[0])+"</dt><dd>"+esc(k[1])+"</dd>";}).join("")+'</dl>'+extra,
    '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak lembar ini</button>');
   m.querySelector("[data-x2]").onclick=closeModal;

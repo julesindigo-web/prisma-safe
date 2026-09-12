@@ -488,6 +488,50 @@ try {
   orphan.length ? bad("kelas yatim ter-render: " + orphan.join(",")) : ok("0 kelas yatim dari " + Object.keys(seen).length + " kelas ter-render");
 } catch (e) { bad("audit kelas render: " + (e && e.message)); }
 
+// [R] foto temuan generik + ekspor komprehensif (ID/Foto/Update) + pagu ukuran
+try {
+  var MR = window.PS_MODULES;
+  MR.p2h.fields.some(function(f){ return f.t === "photo" && f.k === "foto"; }) ? ok("skema foto: p2h (+7 modul lain)") : bad("kolom foto hilang");
+  window.PSV.renderModule(MR.inspeksi);
+  window.document.querySelector('#view [data-a="add"]').click();
+  window.document.querySelector('.modal [data-ph="foto"]') ? ok("input foto di form inspeksi") : bad("input foto hilang");
+  window.document.querySelector('.modal [name="area"]').value = "UJI-FOTO";
+  window.document.querySelector('.modal [name="oleh"]').value = "UJI";
+  var imf = new window.File(["img".repeat(50)], "temuan.png", { type: "image/png" });
+  var fi = window.document.querySelector('.modal [data-ph="foto"]');
+  Object.defineProperty(fi, "files", { value: [imf], configurable: true });
+  fi.dispatchEvent(new window.Event("change", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 300));
+  (window.document.querySelector('[data-f="foto"]')._photos || []).length === 1 ? ok("foto terkompresi ke state") : bad("foto tak masuk state");
+  var cF0 = window.PS.count("inspeksi");
+  window.document.querySelector(".modal [data-ok]").click();
+  var frec = window.PS.all("inspeksi").find(function(r){ return r.area === "UJI-FOTO"; });
+  (window.PS.count("inspeksi") === cF0 + 1 && frec && (frec.foto || []).length === 1) ? ok("rekaman + 1 foto tersimpan") : bad("simpan foto gagal");
+  window.PSV.renderModule(MR.inspeksi);
+  window.document.querySelectorAll('[data-a="view"]')[0].click();
+  var dTx = window.document.querySelector(".modal").textContent;
+  (/1 foto/.test(dTx) && window.document.querySelectorAll(".modal img").length >= 1) ? ok("detail tampilkan foto") : bad("detail foto gagal");
+  window.document.querySelector(".modal [data-p]").click();
+  /<img/.test(printed[printed.length - 1]) ? ok("cetak lembar sertakan foto") : bad("print foto gagal");
+  window.PSV.closeModal();
+  let lp2 = null; const OB4 = window.Blob;
+  window.Blob = function(p, o){ lp2 = p; return new OB4(p, o); };
+  window.PSV.renderModule(MR.inspeksi);
+  window.document.querySelector('#view [data-a="csv"]').click();
+  window.Blob = OB4;
+  (/ID/.test(lp2[0]) && /Foto/.test(lp2[0]) && /Update/.test(lp2[0]) && /1 foto/.test(lp2[0])) ? ok("CSV: kolom ID/Foto/Update + isi") : bad("CSV komprehensif gagal");
+  window.PSV.renderModule(MR.inspeksi);
+  window.document.querySelector('#view [data-a="add"]').click();
+  window.document.querySelector('.modal [name="area"]').value = "UJI-BIG";
+  window.document.querySelector('.modal [name="oleh"]').value = "UJI";
+  window.document.querySelector('[data-f="foto"]')._photos = ["x".repeat(2 * 1024 * 1024)];
+  var cB0 = window.PS.count("inspeksi");
+  window.document.querySelector(".modal [data-ok]").click();
+  (window.PS.count("inspeksi") === cB0 && !!window.document.querySelector(".modal")) ? ok("pagu 1,5MB tolak + form bertahan") : bad("pagu gagal");
+  window.PSV.closeModal();
+  window.PS.del("inspeksi", frec.id);
+} catch (e) { bad("foto/ekspor komprehensif: " + (e && e.message)); }
+
 console.log(fail ? `\nDOM-TEST: FAIL (${fail})` : `\nDOM-TEST: PASS (${pass} checks)`);
 if (errors.length) console.log("js errors tambahan: " + errors.slice(0, 3).join(" | "));
 process.exit(fail ? 1 : 0);

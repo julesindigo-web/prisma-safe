@@ -40,7 +40,7 @@ function renderSet(){
   document.getElementById("bXlsx").onclick=function(){ if(!window.XLSX){toast("Butuh internet sekali untuk modul Excel — gunakan CSV per modul.","err");return;}
     var wb=XLSX.utils.book_new();
     Object.keys(window.PS_MODULES).forEach(function(k){ var def=window.PS_MODULES[k], rows=PS.all(k); if(!rows.length)return;
-      var data=rows.map(function(r){var o={};def.cols.forEach(function(cc){o[cc.label]=cc.get?cc.get(r):(r[cc.k]==null?"":r[cc.k]);});return o;});
+      var data=rows.map(function(r){var o={ID:(r.id||"-")};def.cols.forEach(function(cc){o[cc.label]=cc.get?cc.get(r):(r[cc.k]==null?"":r[cc.k]);});if(def.fields.some(function(f){return f.t==="photo";}))o.Foto=((r.foto||[]).length||0)+" foto";try{var dd=r._u?new Date(r._u):null;o.Update=dd?(dd.toLocaleDateString("id-ID")+" "+dd.toLocaleTimeString("id-ID")):"-";}catch(_){o.Update="-";}return o;});
       XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),def.title.slice(0,31)); });
     XLSX.writeFile(wb,"PRISMA-SAFE_semua-modul.xlsx"); toast("Excel semua modul terunduh.","ok"); };
   document.getElementById("bReset").onclick=function(){ if(window.RBAC&&!window.RBAC.can("reset")){ toast(window.RBAC.deny("reset data"),"err"); return; } if(confirm("Kembalikan SEMUA data ke bawaan awal? Data input Anda akan hilang — unduh backup dulu bila perlu.")){ PS.reset(); buildNav(); route(); toast("Data dikembalikan ke awal.","ok"); } };

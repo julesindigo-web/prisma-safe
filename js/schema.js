@@ -19,7 +19,8 @@ mod("laporan","Laporan Harian","UTAMA","Aktivitas K3 harian ala SMI-FRM-SFT04: s
  {t:"text",k:"lokasi",label:"Lokasi kerja",req:1,hint:"cth. Pit Area & Hauling Road KM 2–4"},
  {t:"number",k:"mp",label:"Manpower hadir",def:0},{t:"number",k:"jam",label:"Jam kerja",def:8},
  {t:"textarea",k:"aktivitas",label:"Aktivitas hari ini",req:1},{t:"textarea",k:"inspeksi",label:"Inspeksi / patroli dilakukan"},
- {t:"textarea",k:"temuan",label:"Temuan"},{t:"textarea",k:"insiden",label:"Insiden / near miss",def:"Nihil"},
+ {t:"textarea",k:"temuan",label:"Temuan"},
+ {t:"photo",k:"foto",label:"Foto kegiatan/temuan"},{t:"textarea",k:"insiden",label:"Insiden / near miss",def:"Nihil"},
  {t:"textarea",k:"tl",label:"Tindak lanjut"},{t:"text",k:"oleh",label:"Dibuat oleh",req:1}
 ],[
  {k:"tgl",label:"Tanggal"},{k:"shift",label:"Shift"},{k:"lokasi",label:"Lokasi"},
@@ -31,6 +32,7 @@ mod("inspeksi","Inspeksi K3","PENGAWASAN","SAP, SKAT, APAR, mess, hauling, pit, 
  {t:"text",k:"area",label:"Area / lokasi",req:1},{t:"text",k:"oleh",label:"Pemeriksa",req:1},
  {t:"number",k:"n",label:"Jumlah temuan",def:0},{t:"select",k:"krit",label:"Temuan kritis?",opts:["Nihil","Ada — sudah ditindaklanjuti","Ada — perlu PICA"]},
  {t:"textarea",k:"uraian",label:"Uraian temuan & observasi",hint:"Satu baris per temuan: lokasi — uraian — saran"},
+ {t:"photo",k:"foto",label:"Foto temuan"},
  {t:"select",k:"status",label:"Status",req:1,opts:["Close","Open","Perlu PICA"]}
 ],[
  {k:"tgl",label:"Tanggal"},{k:"jenis",label:"Jenis"},{k:"area",label:"Area"},
@@ -41,6 +43,7 @@ mod("pica","PICA & Tindak Lanjut","PENGAWASAN","Problem Identification & Correct
  {t:"text",k:"no",label:"No. PICA",req:1,hint:"cth. PICA-2026-09-001"},
  {t:"select",k:"sumber",label:"Sumber",req:1,opts:["Inspeksi","Insiden / Near Miss","Audit SMKP","Sampling SML","Regulatory","Keluhan","Komisioning"]},
  {t:"date",k:"tgl",label:"Tanggal temuan",req:1},{t:"textarea",k:"masalah",label:"Deskripsi masalah",req:1},
+ {t:"photo",k:"foto",label:"Foto kondisi temuan"},
  {t:"textarea",k:"akar",label:"Analisa akar masalah"},{t:"textarea",k:"korektif",label:"Tindakan korektif"},
  {t:"textarea",k:"preventif",label:"Tindakan preventif"},{t:"text",k:"pic",label:"PIC",req:1},
  {t:"date",k:"target",label:"Target selesai",req:1},
@@ -56,7 +59,8 @@ mod("insiden","Insiden & Investigasi","PENGAWASAN","Near miss → first aid → 
  {t:"select",k:"kat",label:"Kategori",req:1,opts:S.incidentCats},{t:"date",k:"tgl",label:"Tanggal kejadian",req:1},
  {t:"text",k:"waktu",label:"Waktu (WITA)",hint:"cth. 14:35"},{t:"text",k:"lokasi",label:"Lokasi",req:1},
  {t:"text",k:"unit",label:"Unit / peralatan terkait"},{t:"text",k:"korban",label:"Korban / pihak terdampak"},
- {t:"textarea",k:"kronologi",label:"Kronologi",req:1},{t:"textarea",k:"sebab",label:"Sebab langsung & tidak langsung"},
+ {t:"textarea",k:"kronologi",label:"Kronologi",req:1},
+ {t:"photo",k:"foto",label:"Foto TKP/kejadian"},{t:"textarea",k:"sebab",label:"Sebab langsung & tidak langsung"},
  {t:"textarea",k:"akar",label:"Akar masalah"},{t:"textarea",k:"tindakan",label:"Tindakan korektif & preventif"},
  {t:"select",k:"status",label:"Status",req:1,opts:["Open — investigasi berjalan","Close — sudah verifikasi","Dilaporkan ke regulator"]},
  {t:"text",k:"oleh",label:"Pelapor",req:1}
@@ -68,6 +72,7 @@ mod("insiden","Insiden & Investigasi","PENGAWASAN","Near miss → first aid → 
 mod("ibpr","IBPR / HIRADC","ANALISIS RISIKO","Identifikasi bahaya, penilaian risiko matriks 5×5 & hierarki pengendalian (SFT01).","SFT01",[
  {t:"select",k:"dept",label:"Departemen",req:1,opts:D},{t:"text",k:"aktivitas",label:"Aktivitas / pekerjaan",req:1},
  {t:"textarea",k:"bahaya",label:"Bahaya & risiko",req:1},
+ {t:"photo",k:"foto",label:"Foto lokasi/bahaya"},
  {t:"select",k:"l0",label:"L awal (1–5)",req:1,opts:["1","2","3","4","5"]},{t:"select",k:"s0",label:"S awal (1–5)",req:1,opts:["1","2","3","4","5"]},
  {t:"textarea",k:"kontrol",label:"Pengendalian (hierarki)",req:1,hint:S.hierarchy.join(" → ")},
  {t:"select",k:"l1",label:"L sisa (1–5)",req:1,opts:["1","2","3","4","5"]},{t:"select",k:"s1",label:"S sisa (1–5)",req:1,opts:["1","2","3","4","5"]},
@@ -107,6 +112,7 @@ mod("p2h","P2H Unit","PERSONEL & KESEHATAN","Pre-start check harian semua unit (
  {t:"select",k:"unit",label:"Jenis unit",req:1,opts:U},{t:"text",k:"nopol",label:"No. unit / nopol",req:1},
  {t:"text",k:"operator",label:"Operator / driver",req:1},{t:"date",k:"tgl",label:"Tanggal",req:1},
  {t:"text",k:"hm",label:"HM / KM"},{t:"textarea",k:"rusak",label:"Item RUSAK / catatan (otomatis bila checklist)"},
+ {t:"photo",k:"foto",label:"Foto kerusakan unit"},
  {t:"select",k:"hasil",label:"Hasil akhir",req:1,opts:["LAYAK operasi","TIDAK LAYAK — parkir & lapor mekanik","Layak bersyarat — pantau"]}
 ],[
  {k:"tgl",label:"Tanggal"},{k:"nopol",label:"No. unit"},{k:"unit",label:"Unit"},{k:"operator",label:"Operator"},
@@ -213,7 +219,8 @@ mod("hazard","Hazard & Near-Miss","PENGAWASAN","Lapor bahaya: GPS + foto bukti +
 mod("units","Unit & Status Kelayakan","PENGAWASAN","Master unit: Layak/Terbatas/Breakdown. P2H TIDAK LAYAK mem-breakdown otomatis.","UNIT",[
  {t:"text",k:"nopol",label:"No. unit",req:1},{t:"select",k:"jenis",label:"Jenis",req:1,opts:U},
  {t:"text",k:"lokasi",label:"Lokasi"},{t:"select",k:"status",label:"Status",req:1,opts:["Layak","Terbatas","Breakdown"]},
- {t:"textarea",k:"sebab",label:"Sebab / catatan"},{t:"date",k:"sejak",label:"Sejak"}
+ {t:"textarea",k:"sebab",label:"Sebab / catatan"},
+ {t:"photo",k:"foto",label:"Foto kondisi unit"},{t:"date",k:"sejak",label:"Sejak"}
 ],[
  {k:"nopol",label:"No. unit"},{k:"jenis",label:"Jenis"},
  {k:"status",label:"Status",chip:function(r){ return r.status === "Layak" ? "green" : r.status === "Terbatas" ? "amber" : "red"; }},
@@ -279,6 +286,7 @@ mod("sos","SOS Darurat","DARURAT","Log panggilan darurat. Gunakan tombol SOS men
  {t:"date",k:"tgl",label:"Tanggal",req:1},{t:"text",k:"jam",label:"Jam"},
  {t:"select",k:"jenis",label:"Jenis",req:1,opts:["Kecelakaan kerja","Kebakaran","Longsor/jatuhan","Kondisi medis","Alat berat bahaya","Tumpahan B3 / lingkungan","Lainnya"]},
  {t:"text",k:"gps",label:"Posisi"},{t:"textarea",k:"ket",label:"Keterangan"},
+ {t:"photo",k:"foto",label:"Foto lokasi"},
  {t:"text",k:"pelapor",label:"Pelapor"},
  {t:"select",k:"status",label:"Status",req:1,opts:["Open","Selesai"]}
 ],[

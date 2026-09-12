@@ -56,16 +56,20 @@ approval multi-level + TTD digital + LOTO • RCA 5Whys/Fishbone/SCAT-lite.
 CSV (delimiter `;`) • Excel `.xlsx` **penuh offline** (SheetJS di-vendor-kan di
 `js/vendor/`, CDN hanya fallback darurat) • Cetak/PDF berkop + tanda tangan •
 Lembar per-baris • Backup JSON • Excel semua-modul • Ringkasan eksekutif.
+Semua ekspor tabel/baris kini memuat kolom **ID** (telusur audit), **Foto**
+(jumlah foto temuan), dan **Update** (cap waktu) — presisi dan lengkap.
 
 ## Berkas & foto
 
 Setiap baris di semua 25 modul punya tombol **Berkas**: unggah foto bukti
 (dikompresi otomatis di perangkat), PDF, lembar kerja, video pendek.
+Modul temuan (laporan, inspeksi, PICA, insiden, IBPR, P2H, unit, SOS) punya
+kolom **Foto temuan** khusus (maks 3, tampil di detail + tercetak di lembar).
 Batas aman: 15 MB/berkas, inline ≤700 KB selebihnya ke IndexedDB,
 executable (.exe/.bat/.ps1/dsb) ditolak, pagu rekor ~2 MB. Peran Auditor
 read-only (boleh membuka/mengunduh, tak boleh menambah/menghapus).
 
-## Cakupan uji (86 checks, `npm test`)
+## Cakupan uji (95 checks, `npm test`)
 
 `npm install` sekali, lalu `npm test` (jsdom, hermetik tanpa internet)
 dan `npm run check` (gerbang rilis). Yang diuji: boot, 25/25 modul render,

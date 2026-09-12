@@ -42,7 +42,7 @@ window.PS = {
   persist: function(){ return save(DB); },
   all: function(m){ return DB.rows[m]||[]; },
   get: function(m,id){ return (DB.rows[m]||[]).find(function(r){return r.id===id;}); },
-  put: function(m,obj){ var arr=DB.rows[m]; var i=arr.findIndex(function(r){return r.id===obj.id;}); if(i>=0)arr[i]=obj; else arr.unshift(obj); save(DB); },
+  put: function(m,obj){ obj._u=Date.now(); var arr=DB.rows[m]; var i=arr.findIndex(function(r){return r.id===obj.id;}); if(i>=0)arr[i]=obj; else arr.unshift(obj); save(DB); },
   del: function(m,id){ DB.rows[m]=DB.rows[m].filter(function(r){return r.id!==id;}); save(DB); },
   reset: function(){ DB = blankDB(); seed(DB); save(DB); window.PS.db = DB; },
   exportJSON: function(){ return JSON.stringify({app:"PRISMA-SAFE",v:1,at:new Date().toISOString(),db:DB},null,1); },
