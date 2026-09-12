@@ -65,6 +65,20 @@ Batas aman: 15 MB/berkas, inline ≤700 KB selebihnya ke IndexedDB,
 executable (.exe/.bat/.ps1/dsb) ditolak, pagu rekor ~2 MB. Peran Auditor
 read-only (boleh membuka/mengunduh, tak boleh menambah/menghapus).
 
+## Cakupan uji (85 checks, `npm test`)
+
+`npm install` sekali, lalu `npm test` (jsdom, hermetik tanpa internet)
+dan `npm run check` (gerbang rilis). Yang diuji: boot, 25/25 modul render,
+CRUD penuh + validasi + paginasi + filter + format tanggal, isi CSV (BOM +
+header), XLSX, semua jalur cetak, backup/restore/reset, P2H end-to-end +
+auto-breakdown, approval PTW L1→L2→L3 + tolak + gate KTT, LOTO ±negatif,
+RCA simpan/cetak, SOS penuh, muster benar/salah kode, fatigue/tele/hazard
+compute, LTIFR jujur ±MH, SMKP + Kepmen + periode, unggah teks/gambar +
+tolak exe + pagu 15 MB + fallback IDB, RBAC 2 peran, audit valid + tamper,
+outbox + drain offline, rute liar, filter nav, Mode Mudah.
+Butuh browser/perangkat nyata: gambar/kanvas asli, GPS/kamera, SW lifecycle,
+Vercel runtime, multi-pengguna, kuota penyimpanan.
+
 ## Struktur berkas
 
 ```
