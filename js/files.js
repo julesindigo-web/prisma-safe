@@ -120,7 +120,7 @@ function open(mod, id){
     var tot = list.reduce(function(a, f){ return a + (+f.size || 0); }, 0);
     var h3 = m.querySelector("header h3"); if(h3) h3.textContent = "Berkas — " + (def ? def.title : mod) + " (" + list.length + ", " + fmtSize(tot) + ")";
     m.querySelector("#flList").innerHTML = list.length ? list.map(function(f, i){
-      return '<div class="checkline"><span style="color:#2743a6">' + window.ic(ICON[f.kind] || "dokumen", "ic-20") + '</span>'
+      return '<div class="checkline"><span class="file-ic">' + window.ic(ICON[f.kind] || "dokumen", "ic-20") + '</span>'
         + '<div style="flex:1"><b>' + esc(f.name || ("berkas-" + (i + 1))) + '</b><small>' + esc(f.kind || "") + " • " + fmtSize(f.size) + " • " + esc(f.ts || "") + (f.blob ? " • IndexedDB" : "") + "</small></div>"
         + '<button class="btn sm" data-o="' + i + '">Buka</button>'
         + (canEdit ? ' <button class="btn sm danger" data-d="' + f.id + '">Hapus</button>' : "") + "</div>"; }).join("")

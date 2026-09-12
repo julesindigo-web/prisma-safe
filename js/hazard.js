@@ -35,7 +35,7 @@ function onAdd(){
     + '<div class="fld"><label>Likelihood (1–5) *</label><select name="l">' + S.riskMatrix.likelihood.map(function(x){ return "<option>" + x[0] + "</option>"; }).join("") + "</select></div>"
     + '<div class="fld"><label>Severity (1–5) *</label><select name="s">' + S.riskMatrix.severity.map(function(x){ return "<option>" + x[0] + "</option>"; }).join("") + "</select></div>"
     + "</div>"
-    + '<div class="card" style="background:#f6f8fc" id="hzPrev">Skor: <b id="hzScore">1 • RENDAH</b></div>'
+    + '<div class="card" style="background:var(--tint)" id="hzPrev">Skor: <b id="hzScore">1 • RENDAH</b></div>'
     + '<div class="frow"><div class="fld"><label>'+window.ic("pin","ic-14")+'GPS (opsional)</label><div class="toolbar"><button class="btn sm" id="hzGps" type="button">'+window.ic("pin","ic-14")+'Ambil GPS</button><span class="hint" id="hzGpsTx">Belum ada koordinat.</span></div></div>'
     + '<div class="fld"><label>'+window.ic("camera","ic-14")+'Foto bukti (maks 3, opsional)</label><input id="hzFoto" type="file" accept="image/*" capture="environment" multiple><div class="hint">Dikompresi otomatis di perangkat.</div><div id="hzThumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div></div>';
   var m = window.PSV.openModal("Lapor Hazard / Near-Miss (SFT13)", h,
@@ -63,7 +63,7 @@ function onAdd(){
     })(0);
   });
   function thumbs(){ m.querySelector("#hzThumbs").innerHTML = st.photos.map(function(d, i){
-    return '<span style="position:relative"><img src="' + d + '" style="width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid #c9d2e4"><button class="btn sm danger" data-t="' + i + '" style="position:absolute;top:-8px;right:-8px;padding:0 6px">×</button></span>'; }).join("");
+    return '<span style="position:relative"><img src="' + d + '" style="width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--inputbd)"><button class="btn sm danger" data-t="' + i + '" style="position:absolute;top:-8px;right:-8px;padding:0 6px">×</button></span>'; }).join("");
     m.querySelectorAll("[data-t]").forEach(function(b){ b.onclick = function(){ st.photos.splice(+b.dataset.t, 1); thumbs(); }; }); }
   m.querySelector("[data-ok]").onclick = function(){
     function v(n){ return (m.querySelector('[name="' + n + '"]').value || "").trim(); }
@@ -86,7 +86,7 @@ function view(id){
   var extra = "";
   if(r.gps) extra += '<p><a href="https://www.openstreetmap.org/?mlat=' + r.gps.lat + "&mlon=" + r.gps.lng + '#map=16/' + r.gps.lat + "/" + r.gps.lng + '" target="_blank" rel="noopener">'+window.ic("pin","ic-14")+'Buka peta (butuh internet)</a></p>';
   if((r.photos || []).length) extra += "<h3>Foto bukti (" + r.photos.length + ")</h3>" + r.photos.map(function(d){
-    return '<a href="' + d + '" target="_blank" rel="noopener"><img src="' + d + '" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #c9d2e4;margin:0 8px 8px 0"></a>'; }).join("");
+    return '<a href="' + d + '" target="_blank" rel="noopener"><img src="' + d + '" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--inputbd);margin:0 8px 8px 0"></a>'; }).join("");
   var m = window.PSV.openModal("Hazard — detail",
     '<dl class="detail">' + kv.map(function(k){ return "<dt>" + window.esc(k[0]) + "</dt><dd>" + window.esc(String(k[1] == null ? "—" : k[1])) + "</dd>"; }).join("") + "</dl>" + extra,
     '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak lembar ini</button>');

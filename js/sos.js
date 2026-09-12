@@ -37,7 +37,7 @@ function trigger(){
 function beacon(r){
   var txt = "SOS PRISMA-SAFE: " + r.jenis + " @ " + r.gps + " (" + r.tgl + " " + r.jam + ") " + (r.ket || "");
   var m = window.PSV.openModal("SOS AKTIF — " + r.jenis,
-    '<div class="card" style="border:3px solid #d63a3a;background:#fff5f5"><h2 style="color:#a11">Tetap tenang. Minta bantuan di sekitar & hubungi ruang kontrol.</h2>'
+    '<div class="card alert-card"><h2>Tetap tenang. Minta bantuan di sekitar & hubungi ruang kontrol.</h2>'
     + "<p><b>Waktu:</b> " + window.esc(r.tgl + " " + r.jam) + "<br><b>Posisi:</b> " + window.esc(r.gps) + "<br><b>Ket:</b> " + window.esc(r.ket || "—") + "</p></div>",
     '<a class="btn warn" id="sosShare" href="#">'+window.ic("share","ic-16")+'Bagikan posisi</a><a class="btn danger" href="tel:' + window.esc(sosNumber()) + '">'+window.ic("phone","ic-16")+'Telepon ' + window.esc(sosNumber()) + '</a><span style="flex:1"></span><button class="btn" data-x2>Tutup</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Tandai selesai</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;

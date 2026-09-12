@@ -48,7 +48,7 @@ function renderDash(){
   var expN=0, _nd=new Date(); _nd.setHours(0,0,0,0);
   PS.all("sertifikasi").forEach(function(c){ if(!c.exp) return; var d=Math.round((new Date(c.exp+"T00:00:00")-_nd)/86400000); if(!isNaN(d)&&d<=30) expN++; });
   PS.all("mcu").forEach(function(c){ if(!c.berlaku) return; var d=Math.round((new Date(c.berlaku+"T00:00:00")-_nd)/86400000); if(!isNaN(d)&&d<=30) expN++; });
-  h+='<div class="card" style="border-left:5px solid '+((bd.length||sosO.length)?"#d63a3a":"#15803d")+'"><h2>'+window.ic("incident","ic-18")+'Peringatan operasional</h2><div class="toolbar">'
+  h+='<div class="card '+((bd.length||sosO.length)?"alert-on":"alert-ok")+'"><h2>'+window.ic("incident","ic-18")+'Peringatan operasional</h2><div class="toolbar">'
     +'<span class="chip '+(bd.length?"red":"green")+'">'+window.ic("units","ic-14")+'Breakdown: '+bd.length+'</span>'
     +'<span class="chip '+(sosO.length?"red":"green")+'">'+window.ic("sos","ic-14")+'SOS terbuka: '+sosO.length+'</span>'
     +'<span class="chip '+(expN?"amber":"green")+'">'+window.ic("sertifikasi","ic-14")+'Kedaluwarsa ≤30h: '+expN+'</span>'

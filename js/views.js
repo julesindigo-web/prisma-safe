@@ -92,7 +92,7 @@ function riskNote(def,rec){ /* catatan risiko live untuk IBPR */
   if(def.key!=="ibpr") return "";
   function lvl(s){ return window.PRISMA_SEED.riskMatrix.level(s)[0]; }
   var a=(+rec.l0||0)*(+rec.s0||0), b=(+rec.l1||0)*(+rec.s1||0);
-  return '<div class="card" style="background:#f6f8fc"><b>Matriks 5×5 — </b>Risiko awal: <b>'+a+' • '+lvl(a)+'</b> → Risiko sisa: <b>'+b+' • '+lvl(b)+'</b> <span class="hint">Skor = Likelihood × Severity.</span></div>'; }
+  return '<div class="card" style="background:var(--tint)"><b>Matriks 5×5 — </b>Risiko awal: <b>'+a+' • '+lvl(a)+'</b> → Risiko sisa: <b>'+b+' • '+lvl(b)+'</b> <span class="hint">Skor = Likelihood × Severity.</span></div>'; }
 function formModal(def,rec){
   var isNew=!rec; rec=rec||{};
   if(isNew){ rec={}; def.fields.forEach(function(f){ rec[f.k]=f.def==null?"":f.def; }); if(def.fields.find(function(f){return f.k==="tgl";})) rec.tgl=PS.today(); if(def.fields.find(function(f){return f.k==="status";})) rec.status=def.fields.find(function(f){return f.k==="status";}).opts[0]; }

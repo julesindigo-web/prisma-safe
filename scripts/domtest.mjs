@@ -480,6 +480,10 @@ try {
   var incQ = tempPut("insiden", { tgl: "2026-09-12", kat: "Near Miss (Hampir Bahaya)", lokasi: "L", kronologi: "u", status: "Open", oleh: "T" });
   window.RCA.open(incQ); harvest(); window.PSV.closeModal();
   window.PS.del("p2h", tmpId); window.PS.del("permit", pmId); window.PS.del("insiden", incQ);
+  var tagId = tempPut("units", { nopol: "TAG-01", jenis: "LV", lokasi: "L", status: "Breakdown", sebab: "uji", sejak: "2026-09-12" });
+  window.PS_MODULES.units.onAction("tag", tagId);
+  (/DILARANG DIOPERASIKAN/.test(printed[printed.length - 1]) && /currentColor/.test(printed[printed.length - 1])) ? ok("cetak breakdown-tag konsisten token") : bad("tag print gagal");
+  window.PS.del("units", tagId);
   var orphan = Object.keys(seen).filter(function(c){ return !defC[c] && !/^ic(-\d+)?$/.test(c); });
   orphan.length ? bad("kelas yatim ter-render: " + orphan.join(",")) : ok("0 kelas yatim dari " + Object.keys(seen).length + " kelas ter-render");
 } catch (e) { bad("audit kelas render: " + (e && e.message)); }

@@ -308,7 +308,7 @@ M.units.rowActions = [{ k: "tag", label: "Cetak Tag" }];
 M.units.onAction = function(k, id){ if(k !== "tag") return; var r = window.PS.get("units", id); if(!r) return;
   window.PX.printRecord("STATUS UNIT — " + (r.nopol || ""), r.status === "Breakdown" ? "DILARANG OPERASI" : r.status,
     [["No. unit", r.nopol], ["Jenis", r.jenis], ["Status", r.status], ["Sebab", r.sebab || "—"], ["Sejak", r.sejak || "—"], ["Lokasi", r.lokasi || "—"]],
-    r.status === "Breakdown" ? "<h2><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#a11\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-5px\"><path d=\"M12 3L2 20h20z\"/><path d=\"M12 9v5\"/><path d=\"M12 17h.01\"/></svg> UNIT DILARANG DIOPERASIKAN</h2><p>Pasang lembar ini di kabin/kunci kontak. Pencabutan hanya oleh Safety Officer/KTT setelah verifikasi.</p>" : ""); };
+    r.status === "Breakdown" ? '<h2 class="danger"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-5px"><path d="M12 3L2 20h20z"/><path d="M12 9v5"/><path d="M12 17h.01"/></svg> UNIT DILARANG DIOPERASIKAN</h2><p>Pasang lembar ini di kabin/kunci kontak. Pencabutan hanya oleh Safety Officer/KTT setelah verifikasi.</p>' : ""); };
 M.fatigue.compute = function(o){ var t = +o.tidur || 0, k = +o.kantuk || 0;
   o.hasil = (t < 4 || k >= 8) ? "TIDAK FIT — istirahat" : (t < 6 || k >= 6 || (o.gejala && o.gejala !== "Nihil")) ? "Fit dengan catatan" : "Fit"; };
 M.tele.compute = function(o){ o.status = (+o.nilai || 0) >= (+o.ambang || 0) ? "LEBIH AMBANG" : "Normal";

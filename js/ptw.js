@@ -17,7 +17,7 @@ function statusAfter(r){
 }
 function sigPad(cb){
   var m = window.PSV.openModal("Tanda tangan digital",
-    '<p class="sub">Tulis di kotak dengan jari/mouse, lalu simpan.</p><canvas id="sigCv" width="560" height="200" style="width:100%;border:2px dashed #94a3c7;border-radius:12px;touch-action:none;background:#fbfcff"></canvas>' +
+    '<p class="sub">Tulis di kotak dengan jari/mouse, lalu simpan.</p><canvas id="sigCv" width="560" height="200" style="width:100%;border:2px dashed var(--inputbd);border-radius:12px;touch-action:none;background:var(--panel)"></canvas>' +
     '<div class="fld" style="margin-top:10px"><label>Nama penandatangan *</label><input id="sigNm"></div>',
     '<button class="btn" data-x2>Batal</button><button class="btn sm" data-cl>Bersihkan</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan TTD</button>');
   var cv = m.querySelector("#sigCv"), cx = cv.getContext("2d"), draw = false, mark = false;
