@@ -46,7 +46,8 @@ window.PS = {
   del: function(m,id){ DB.rows[m]=DB.rows[m].filter(function(r){return r.id!==id;}); save(DB); },
   reset: function(){ DB = blankDB(); seed(DB); save(DB); window.PS.db = DB; },
   exportJSON: function(){ return JSON.stringify({app:"PRISMA-SAFE",v:1,at:new Date().toISOString(),db:DB},null,1); },
-  importJSON: function(txt){ var o=JSON.parse(txt); if(!o.db||!o.db.rows) throw new Error("Berkas bukan backup PRISMA-SAFE."); DB=o.db; save(DB); window.PS.db=DB; },
+  importJSON: function(txt){ var o=JSON.parse(txt); if(!o.db||!o.db.rows) throw new Error("Berkas bukan backup PRISMA-SAFE."); DB=o.db; DB.rows=DB.rows||{}; DB.outbox=DB.outbox||[]; DB.audit=DB.audit||[];
+    Object.keys(blankDB().rows).forEach(function(k){ if(!DB.rows[k]) DB.rows[k]=[]; }); save(DB); window.PS.db=DB; },
   count: function(m){ return (DB.rows[m]||[]).length; },
   total: function(){ return Object.keys(DB.rows).reduce(function(a,k){return a+DB.rows[k].length;},0); }
 };

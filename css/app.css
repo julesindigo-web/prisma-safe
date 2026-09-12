@@ -1,4 +1,4 @@
-/* PRISMA-SAFE v1.0 — premium professional theme (light content + navy sidebar) */
+/* PRISMA-SAFE v1.1 — premium professional theme (light content + navy sidebar) */
 :root{
   --navy:#0b1530; --navy2:#122046; --ink:#1b2440;
   --mut:#5b6480; --line:#e5e9f2; --bg:#f3f5fa; --card:#ffffff;
@@ -8,6 +8,7 @@
   --fs:15px;
 }
 *{box-sizing:border-box}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 html{scroll-behavior:smooth}
 body{margin:0;font:400 var(--fs)/1.6 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg)}
 .skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:#fff;padding:8px 14px;z-index:99;border-radius:8px}
