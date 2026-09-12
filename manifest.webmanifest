@@ -1,0 +1,25 @@
+{
+  "name": "PRISMA-SAFE — Aplikasi K3 Pertambangan",
+  "short_name": "PRISMA-SAFE",
+  "description": "Aplikasi Keselamatan dan Kesehatan Kerja (K3) pertambangan: input mudah, laporan rapi, ekspor CSV/Excel/PDF. Bekerja offline.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1530",
+  "theme_color": "#0b1530",
+  "lang": "id",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Lapor Inspeksi", "url": "/#/inspeksi", "description": "Input temuan inspeksi K3" },
+    { "name": "Lapor Kejadian", "url": "/#/insiden", "description": "Near miss & insiden" },
+    { "name": "Cek P2H", "url": "/#/p2h", "description": "Checklist harian unit" },
+    { "name": "Dashboard", "url": "/#/dashboard", "description": "KPI & ringkasan K3" }
+  ]
+}
