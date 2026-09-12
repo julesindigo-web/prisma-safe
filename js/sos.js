@@ -10,7 +10,7 @@ function nowHM(){ var d = new Date(); function p(n){ return String(n).padStart(2
 function trigger(){
   if(window.RBAC && !window.RBAC.can("add")){ toast(window.RBAC.deny("membuat SOS"), "err"); return; }
   var m = window.PSV.openModal("PANGGILAN DARURAT (SOS)",
-    '<div class="fld"><label>Jenis keadaan darurat *</label><select id="sosJ">' + ["Kecelakaan kerja", "Kebakaran", "Longsor/jatuhan", "Kondisi medis", "Alat berat bahaya", "Lainnya"].map(function(o){ return "<option>" + o + "</option>"; }).join("") + "</select></div>"
+    '<div class="fld"><label>Jenis keadaan darurat *</label><select id="sosJ">' + ["Kecelakaan kerja", "Kebakaran", "Longsor/jatuhan", "Kondisi medis", "Alat berat bahaya", "Tumpahan B3 / lingkungan", "Lainnya"].map(function(o){ return "<option>" + o + "</option>"; }).join("") + "</select></div>"
     + '<div class="fld"><label>Keterangan lokasi (wajib bila GPS gagal)</label><input id="sosK" placeholder="cth. Hauling Road KM 3"></div>'
     + '<p class="hint">GPS akan diambil otomatis (butuh izin). Data tersimpan di perangkat + siap dibagikan manual.</p>',
     '<button class="btn" data-x2>Batal</button><button class="btn danger" data-ok="">'+window.ic("sos","ic-16")+'KIRIM SOS</button>');

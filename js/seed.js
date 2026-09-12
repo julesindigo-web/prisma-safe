@@ -161,5 +161,5 @@ mhContoh: [
  ["2026-09",90000,0]
 ],
 musterPoints: ["Muster Point Utama (Kantor)", "Muster Point Pit", "Muster Point Workshop", "Muster Point Jetty"],
-teleTypes: ["O2 (%)", "CO (ppm)", "H2S (ppm)", "CH4 (%LEL)", "Debu PM10 (µg/m³)", "Kebisingan (dBA)", "Suhu (°C)", "Getaran"]
+teleTypes: ["O2 (%)", "CO (ppm)", "H2S (ppm)", "CH4 (%LEL)", "Debu PM10 (µg/m³)", "Kebisingan (dBA)", "Suhu (°C)", "Getaran (mm/s)", "Pencahayaan (lux)"]
 };

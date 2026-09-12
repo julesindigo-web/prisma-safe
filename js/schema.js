@@ -139,11 +139,15 @@ mod("manpower","Manpower & Kompetensi","PERSONEL & KESEHATAN","Personel ADI+SMI:
 /* ---------- 11 KLINIK ---------- */
 mod("klinik","Klinik & Kesehatan","PERSONEL & KESEHATAN","Kunjungan klinik, data orang sakit, fatigue test & rujukan.","SFT38",[
  {t:"date",k:"tgl",label:"Tanggal",req:1},{t:"text",k:"nama",label:"Nama pasien (inisial bila sensitif)",req:1},
- {t:"select",k:"dept",label:"Departemen",opts:D},{t:"text",k:"diagnosa",label:"Diagnosa sementara / keluhan",req:1},
+ {t:"select",k:"dept",label:"Departemen",opts:D}, {t:"text",k:"diagnosa",label:"Diagnosa sementara / keluhan",req:1},
+ {t:"select",k:"kaitan",label:"Kaitan kerja",req:1,opts:["Kunjungan umum","Dugaan PAK — investigasi lanjut","Kecelakaan kerja","Kontrol ulang"]},
+ {t:"select",k:"kaitan",label:"Kaitan kerja",req:1,opts:["Kunjungan umum","Dugaan PAK — investigasi lanjut","Kecelakaan kerja","Kontrol ulang"]},
  {t:"select",k:"tindak",label:"Tindak lanjut",opts:["Rawat jalan","Observasi","Light duty","Rujuk RS","Rujuk gigi","Istirahat (sick leave)","MCU ulang","Edukasi"]},
  {t:"textarea",k:"cat",label:"Catatan"}
 ],[
- {k:"tgl",label:"Tanggal"},{k:"nama",label:"Pasien"},{k:"dept",label:"Dept"},{k:"diagnosa",label:"Diagnosa"},{k:"tindak",label:"Tindak lanjut"}
+ {k:"tgl",label:"Tanggal"},{k:"nama",label:"Pasien"},{k:"dept",label:"Dept"},{k:"diagnosa",label:"Diagnosa"},
+ {k:"kaitan",label:"Kaitan",chip:function(r){ return /PAK|Kecelakaan/i.test(r.kaitan||"") ? "red" : /Kontrol/i.test(r.kaitan||"") ? "amber" : "grey"; }},
+ {k:"tindak",label:"Tindak lanjut"}
 ]);
 /* ---------- 12 APD ---------- */
 mod("apd","APD & Inventori","PERSONEL & KESEHATAN","Matriks APD per jabatan + stok gudang HSE.","APD",[
@@ -221,7 +225,7 @@ mod("fatigue","Fatigue & Fit-to-Work","PERSONEL & KESEHATAN","Self-assessment pr
  {t:"select",k:"shift",label:"Shift",opts:["Shift 1 (Siang)","Shift 2 (Malam)"]},
  {t:"number",k:"tidur",label:"Jam tidur sebelum shift",req:1,def:7},
  {t:"select",k:"kantuk",label:"Skala kantuk 1 (segar) – 9 (sangat mengantuk)",req:1,opts:["1","2","3","4","5","6","7","8","9"]},
- {t:"select",k:"gejala",label:"Gejala",opts:["Nihil","Mata berat","Pusing","Pegal / lelah berat","Mual","Lainnya"]},
+ {t:"select",k:"gejala",label:"Gejala",opts:["Nihil","Mata berat","Pusing","Sulit fokus/konsentrasi","Pegal / lelah berat","Mual","Lainnya"]},
  {t:"select",k:"hasil",label:"Hasil (otomatis)",opts:["Fit","Fit dengan catatan","TIDAK FIT — istirahat"]}
 ],[
  {k:"tgl",label:"Tanggal"},{k:"nama",label:"Nama"},
@@ -244,7 +248,7 @@ mod("tele","Telemetri Lingkungan","PENGAWASAN","Ukur gas/debu/bising/suhu + amba
  {t:"text",k:"waktu",label:"Waktu (YYYY-MM-DD HH:MM)",req:1},{t:"text",k:"lokasi",label:"Lokasi",req:1},
  {t:"select",k:"jenis",label:"Parameter",req:1,opts:S.teleTypes},
  {t:"number",k:"nilai",label:"Nilai ukur",req:1},{t:"text",k:"satuan",label:"Satuan"},
- {t:"number",k:"ambang",label:"Ambang batas",req:1},
+ {t:"number",k:"ambang",label:"Ambang batas",req:1,hint:"Rujukan NAB umum: O2 19,5–23,5% • CO 25 ppm • H2S 1 ppm • Bising 85 dBA/8 jam (pakai SK site bila beda)"},
  {t:"select",k:"status",label:"Status (otomatis)",opts:["Normal","LEBIH AMBANG"]}
 ],[
  {k:"waktu",label:"Waktu"},{k:"lokasi",label:"Lokasi"},{k:"jenis",label:"Parameter"},
@@ -273,7 +277,7 @@ mod("muster","Muster & Evakuasi","DARURAT","Titik kumpul + absensi kode event. S
 /* ---------- 24 SOS ---------- */
 mod("sos","SOS Darurat","DARURAT","Log panggilan darurat. Gunakan tombol SOS mengambang untuk lapor 1-klik + GPS.","SOS",[
  {t:"date",k:"tgl",label:"Tanggal",req:1},{t:"text",k:"jam",label:"Jam"},
- {t:"select",k:"jenis",label:"Jenis",req:1,opts:["Kecelakaan kerja","Kebakaran","Longsor/jatuhan","Kondisi medis","Alat berat bahaya","Lainnya"]},
+ {t:"select",k:"jenis",label:"Jenis",req:1,opts:["Kecelakaan kerja","Kebakaran","Longsor/jatuhan","Kondisi medis","Alat berat bahaya","Tumpahan B3 / lingkungan","Lainnya"]},
  {t:"text",k:"gps",label:"Posisi"},{t:"textarea",k:"ket",label:"Keterangan"},
  {t:"text",k:"pelapor",label:"Pelapor"},
  {t:"select",k:"status",label:"Status",req:1,opts:["Open","Selesai"]}
@@ -285,7 +289,7 @@ mod("sos","SOS Darurat","DARURAT","Log panggilan darurat. Gunakan tombol SOS men
 /* ---------- 25 SERTIFIKASI & SIMPER ---------- */
 mod("sertifikasi","Sertifikasi & Simper","PERSONEL & KESEHATAN","Simper, KIM, POP/POM/POU, SIO, Blasting + masa berlaku & alert H-30.","SRT",[
  {t:"text",k:"nama",label:"Nama pemegang",req:1},
- {t:"select",k:"jenis",label:"Jenis",req:1,opts:["Simper","KIM","POP","POM","POU","SIO","Blasting (Juru Ledak)","Lainnya"]},
+ {t:"select",k:"jenis",label:"Jenis",req:1,opts:["Simper","KIM","POP","POM","POU","SIO","Blasting (Juru Ledak)","AK3U (Ahli K3 Umum)","Petugas P3K","Lainnya"]},
  {t:"text",k:"no",label:"Nomor"},{t:"date",k:"terbit",label:"Terbit"},
  {t:"date",k:"exp",label:"Berlaku s/d",req:1},{t:"textarea",k:"ket",label:"Keterangan"}
 ],[
@@ -307,7 +311,11 @@ M.units.onAction = function(k, id){ if(k !== "tag") return; var r = window.PS.ge
     r.status === "Breakdown" ? "<h2><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#a11\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align:-5px\"><path d=\"M12 3L2 20h20z\"/><path d=\"M12 9v5\"/><path d=\"M12 17h.01\"/></svg> UNIT DILARANG DIOPERASIKAN</h2><p>Pasang lembar ini di kabin/kunci kontak. Pencabutan hanya oleh Safety Officer/KTT setelah verifikasi.</p>" : ""); };
 M.fatigue.compute = function(o){ var t = +o.tidur || 0, k = +o.kantuk || 0;
   o.hasil = (t < 4 || k >= 8) ? "TIDAK FIT — istirahat" : (t < 6 || k >= 6 || (o.gejala && o.gejala !== "Nihil")) ? "Fit dengan catatan" : "Fit"; };
-M.tele.compute = function(o){ o.status = (+o.nilai || 0) >= (+o.ambang || 0) ? "LEBIH AMBANG" : "Normal"; };
+M.tele.compute = function(o){ o.status = (+o.nilai || 0) >= (+o.ambang || 0) ? "LEBIH AMBANG" : "Normal";
+  var SAT={"O2 (%)":"%","CO (ppm)":"ppm","H2S (ppm)":"ppm","CH4 (%LEL)":"%LEL","Debu PM10 (µg/m³)":"µg/m³","Kebisingan (dBA)":"dBA","Suhu (°C)":"°C","Getaran (mm/s)":"mm/s","Pencahayaan (lux)":"lux"};
+  if(!o.satuan && SAT[o.jenis]) o.satuan = SAT[o.jenis]; };
+var UNIT_GROUP={"LV":"Ringan (LV)","Manhaul":"Ringan (LV)","Dump Truck":"Truck (DT/WT/FT/ST)","Fuel Truck":"Truck (DT/WT/FT/ST)","Water Truck":"Truck (DT/WT/FT/ST)","Service Truck":"Truck (DT/WT/FT/ST)","Excavator":"Excavator","Bulldozer":"Dozer/Grader/Loader/Compactor","Motor Grader":"Dozer/Grader/Loader/Compactor","Wheel Loader":"Dozer/Grader/Loader/Compactor","Compactor":"Dozer/Grader/Loader/Compactor","ADT":"Alat Angkat (Crane/Manitou/ADT)","Crane Truck":"Alat Angkat (Crane/Manitou/ADT)","Manitou":"Alat Angkat (Crane/Manitou/ADT)"};
+M.p2h.compute = function(o){ if(UNIT_GROUP[o.unit]) o.kelompok = UNIT_GROUP[o.unit]; };
 window.PS_MODULES = M;
 window.PS_GROUPS = ["UTAMA","PENGAWASAN","ANALISIS RISIKO","PERSONEL & KESEHATAN","PROGRAM & TATA KELOLA","DARURAT"];
 })();

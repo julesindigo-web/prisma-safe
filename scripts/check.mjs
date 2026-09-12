@@ -14,7 +14,7 @@ const bad = (m) => { console.log("  FAIL " + m); fail++; };
 
 // 1. Sintaks semua JS aplikasi
 console.log("[1] node --check");
-for (const f of ["js/seed.js","js/icons.js","js/idb.js","js/store.js","js/audit.js","js/rbac.js","js/sync.js","js/exports.js","js/schema.js","js/views.js","js/dashboard.js","js/hazard.js","js/ptw.js","js/rca.js","js/smkp.js","js/sos.js","js/app.js","js/pwa.js","sw.js","api/health.js","api/sync.js"]) {
+for (const f of ["js/seed.js","js/icons.js","js/idb.js","js/store.js","js/audit.js","js/rbac.js","js/sync.js","js/exports.js","js/schema.js","js/views.js","js/dashboard.js","js/hazard.js","js/ptw.js","js/rca.js","js/smkp.js","js/sos.js","js/files.js","js/app.js","js/pwa.js","sw.js","api/health.js","api/sync.js"]) {
   try { execSync(`node --check "${join(ROOT, f)}"`, { stdio: "pipe" }); ok(f); }
   catch { bad(f + " (syntax)"); }
 }
@@ -102,7 +102,7 @@ try {
   const files = ["index.html", "offline.html", "css/app.css", "manifest.webmanifest", "README.md",
     "js/seed.js", "js/icons.js", "js/idb.js", "js/store.js", "js/audit.js", "js/rbac.js", "js/sync.js",
     "js/exports.js", "js/schema.js", "js/views.js", "js/dashboard.js", "js/hazard.js", "js/ptw.js",
-    "js/rca.js", "js/smkp.js", "js/sos.js", "js/app.js", "js/pwa.js", "sw.js"];
+    "js/rca.js", "js/smkp.js", "js/sos.js", "js/files.js", "js/app.js", "js/pwa.js", "sw.js"];
   const rx = new RegExp("[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\uFF0B]", "u");
   const hit = [];
   for (const f of files) {

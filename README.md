@@ -57,6 +57,14 @@ CSV (delimiter `;`) • Excel `.xlsx` **penuh offline** (SheetJS di-vendor-kan d
 `js/vendor/`, CDN hanya fallback darurat) • Cetak/PDF berkop + tanda tangan •
 Lembar per-baris • Backup JSON • Excel semua-modul • Ringkasan eksekutif.
 
+## Berkas & foto
+
+Setiap baris di semua 25 modul punya tombol **Berkas**: unggah foto bukti
+(dikompresi otomatis di perangkat), PDF, lembar kerja, video pendek.
+Batas aman: 15 MB/berkas, inline ≤700 KB selebihnya ke IndexedDB,
+executable (.exe/.bat/.ps1/dsb) ditolak, pagu rekor ~2 MB. Peran Auditor
+read-only (boleh membuka/mengunduh, tak boleh menambah/menghapus).
+
 ## Struktur berkas
 
 ```

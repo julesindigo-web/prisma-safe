@@ -57,6 +57,7 @@ function renderModule(def){
       '<td class="no-print" style="white-space:nowrap"><button class="btn sm" data-a="view" data-id="'+r.id+'">Lihat</button> <button class="btn sm" data-a="edit" data-id="'+r.id+'">Ubah</button>'+
       (def.key==="p2h"?' <button class="btn sm warn" data-a="cek" data-id="'+r.id+'">Checklist</button>':"")+
       (def.rowActions||[]).map(function(ra){ return ' <button class="btn sm warn" data-a="x:'+ra.k+'" data-id="'+r.id+'">'+ra.label+'</button>'; }).join("")+
+      ' <button class="btn sm" data-a="x:file" data-id="'+r.id+'">'+window.ic("dokumen","ic-14")+'Berkas'+(((r._files||[]).length)?' ('+r._files.length+')':"")+'</button>'+
       ((!window.RBAC||window.RBAC.can("del"))?' <button class="btn sm danger" data-a="del" data-id="'+r.id+'">Hapus</button>':"")+'</td></tr>'; });
     h+='</tbody></table></div><div class="pager no-print"><button class="btn sm" data-a="prev" '+(st.pg===0?"disabled":"")+'>'+window.ic("chevL","ic-14")+'</button><span>Halaman '+(st.pg+1)+' / '+pages+' • '+rows.length+' data</span><button class="btn sm" data-a="next" '+(st.pg>=pages-1?"disabled":"")+'>'+window.ic("chevR","ic-14")+'</button></div>'; }
   h+='</div>';
@@ -81,7 +82,9 @@ function act(def,a,id){
   else if(a==="add"){ if(typeof def.onAdd === "function") def.onAdd(); else formModal(def,null); }
   else if(a==="edit") formModal(def,PS.get(def.key,id));
   else if(a==="view"){ if(typeof def.onView === "function") def.onView(id); else detailModal(def,PS.get(def.key,id)); }
-  else if(a.indexOf("x:") === 0){ if(typeof def.onAction === "function") def.onAction(a.slice(2), id); }
+  else if(a.indexOf("x:") === 0){ var xk = a.slice(2);
+    if(xk === "file"){ window.FILEU.open(def.key, id); }
+    else if(typeof def.onAction === "function") def.onAction(xk, id); }
   else if(a==="cek") p2hModal(PS.get(def.key,id));
   else if(a==="del"){ if(confirm("Hapus data ini? Tindakan tercatat lokal dan tidak dapat dibatalkan.")){ PS.del(def.key,id); toast("Data dihapus.","ok"); renderModule(def); } }
 }
@@ -116,6 +119,7 @@ function detailModal(def,r){ if(!r) return;
   if(def.key==="p2h"&&r._cek){ extra='<h3>Hasil checklist P2H</h3><table class="tbl"><thead><tr><th>Item</th><th>Kondisi</th></tr></thead><tbody>'+
     r._cek.map(function(c){return '<tr><td>'+esc(c[0])+'</td><td>'+(c[1]==="Baik"?'<span class="chip green">Baik</span>':'<span class="chip red">Rusak</span>')+'</td></tr>';}).join("")+'</tbody></table>'; }
   if(def.key==="induksi"&&r.nilai!==""&&r.nilai!=null) extra='<p>Status kelulusan: <b>'+(+r.nilai>=80?"LULUS (≥80)":"REMEDIAL (<80)")+'</b></p>';
+  if((r._files||[]).length){ extra+='<h3>Berkas terlampir ('+r._files.length+')</h3><p>'+r._files.map(function(f){ return window.esc(f.name||"berkas"); }).join("; ")+'</p><p class="hint">Buka / unduh / kelola via tombol “Berkas” pada baris data.</p>'; }
   var m=openModal(def.title+" — detail",'<dl class="detail">'+kv.map(function(k){return "<dt>"+esc(k[0])+"</dt><dd>"+esc(k[1])+"</dd>";}).join("")+'</dl>'+extra,
    '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak lembar ini</button>');
   m.querySelector("[data-x2]").onclick=closeModal;

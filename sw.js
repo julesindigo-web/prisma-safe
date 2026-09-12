@@ -7,7 +7,7 @@ var PRECACHE = [
   "/css/app.css",
   "/js/seed.js", "/js/icons.js", "/js/store.js", "/js/exports.js", "/js/schema.js",
   "/js/views.js", "/js/dashboard.js", "/js/hazard.js", "/js/ptw.js", "/js/rca.js",
-  "/js/smkp.js", "/js/sos.js", "/js/audit.js", "/js/rbac.js", "/js/sync.js", "/js/idb.js",
+  "/js/smkp.js", "/js/sos.js", "/js/files.js", "/js/audit.js", "/js/rbac.js", "/js/sync.js", "/js/idb.js",
   "/js/app.js", "/js/pwa.js",
   "/js/vendor/xlsx.full.min.js",
   "/icons/icon-192.png", "/icons/icon-512.png",
