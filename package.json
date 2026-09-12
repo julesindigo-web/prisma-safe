@@ -14,5 +14,8 @@
   },
   "dependencies": {
     "jsdom": "^30.0.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
   }
 }
