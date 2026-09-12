@@ -38,25 +38,26 @@
   </aside>
   <div class="main">
     <header class="top">
-      <button class="icon-btn only-mobile" id="btnSide" aria-label="Buka menu">☰</button>
+      <button class="icon-btn only-mobile" id="btnSide" aria-label="Buka menu"><svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <div class="top-title"><h1 id="pageTitle">Dashboard</h1><p id="pageSub"></p></div>
       <div class="top-act">
         <select id="roleSel" title="Peran aktif (RBAC lokal — penegak alur, bukan keamanan server)" style="border:1px solid var(--line);border-radius:10px;padding:9px 8px;font-weight:700;max-width:140px"></select>
-        <button class="btn ghost" id="btnBackup" title="Unduh seluruh data (JSON)">⤓ Backup</button>
-        <button class="btn ghost" id="btnRestoreBtn" title="Pulihkan dari file backup">⤒ Restore</button>
+        <button class="btn ghost" id="btnBackup" title="Unduh seluruh data (JSON)"><svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg>Backup</button>
+        <button class="btn ghost" id="btnRestoreBtn" title="Pulihkan dari file backup"><svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 17v3h16v-3"/></svg>Restore</button>
         <input type="file" id="restoreFile" accept="application/json" hidden />
-        <button class="btn warn" id="btnInstall" hidden>📲 Install</button>
-        <button class="btn primary" id="btnQuickAdd">＋ Input Cepat</button>
+        <button class="btn warn" id="btnInstall" hidden><svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg>Install</button>
+        <button class="btn primary" id="btnQuickAdd"><svg class="ic ic-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Input Cepat</button>
       </div>
     </header>
     <main id="view" tabindex="-1" aria-live="polite"></main>
-    <footer class="foot"><span>PRISMA-SAFE • Keselamatan dan Kesehatan Kerja Pertambangan — Zero Fatality &amp; LTI.</span><span class="foot-r"><span id="netPill" class="chip grey">…</span> <span id="syncPill" class="chip green">✓ antrean kosong</span> <span id="footStat"></span></span></footer>
+    <footer class="foot"><span>PRISMA-SAFE • Keselamatan dan Kesehatan Kerja Pertambangan — Zero Fatality &amp; LTI.</span><span class="foot-r"><span id="netPill" class="chip grey">…</span> <span id="syncPill" class="chip green"><svg class="ic ic-14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:13px;height:13px;margin-right:5px;vertical-align:-2px"><path d="M4 12.5l5 5L20 6.5"/></svg>antrean kosong</span> <span id="footStat"></span></span></footer>
   </div>
 </div>
-<button id="sosBtn" aria-label="Panggilan darurat SOS">SOS</button>
+<button id="sosBtn" aria-label="Panggilan darurat SOS"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg><small>SOS</small></button>
 <div id="modalRoot"></div>
 <div id="toastRoot" aria-live="assertive"></div>
 <script src="js/seed.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/idb.js"></script>
 <script src="js/store.js"></script>
 <script src="js/audit.js"></script>

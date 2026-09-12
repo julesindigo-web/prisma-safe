@@ -14,7 +14,7 @@ const bad = (m) => { console.log("  FAIL " + m); fail++; };
 
 // 1. Sintaks semua JS aplikasi
 console.log("[1] node --check");
-for (const f of ["js/seed.js","js/idb.js","js/store.js","js/audit.js","js/rbac.js","js/sync.js","js/exports.js","js/schema.js","js/views.js","js/dashboard.js","js/hazard.js","js/ptw.js","js/rca.js","js/smkp.js","js/sos.js","js/app.js","js/pwa.js","sw.js","api/health.js","api/sync.js"]) {
+for (const f of ["js/seed.js","js/icons.js","js/idb.js","js/store.js","js/audit.js","js/rbac.js","js/sync.js","js/exports.js","js/schema.js","js/views.js","js/dashboard.js","js/hazard.js","js/ptw.js","js/rca.js","js/smkp.js","js/sos.js","js/app.js","js/pwa.js","sw.js","api/health.js","api/sync.js"]) {
   try { execSync(`node --check "${join(ROOT, f)}"`, { stdio: "pipe" }); ok(f); }
   catch { bad(f + " (syntax)"); }
 }
@@ -94,6 +94,24 @@ try {
     ok("sync: 405 non-POST + 200 echo jujur (durable:false)");
   else bad("sync merespons tak sesuai kontrak");
 } catch (e) { bad("api/sync.js: " + e.message); }
+
+// 7. UI bebas emoji (ikon SVG dipakai; glyph teks trispesifik dikecualikan; vendor lib dikecualikan)
+console.log("[7] UI bebas emoji");
+try {
+  const allow = new Set([0x2630, 0x2713, 0x2714]);
+  const files = ["index.html", "offline.html", "css/app.css", "manifest.webmanifest", "README.md",
+    "js/seed.js", "js/icons.js", "js/idb.js", "js/store.js", "js/audit.js", "js/rbac.js", "js/sync.js",
+    "js/exports.js", "js/schema.js", "js/views.js", "js/dashboard.js", "js/hazard.js", "js/ptw.js",
+    "js/rca.js", "js/smkp.js", "js/sos.js", "js/app.js", "js/pwa.js", "sw.js"];
+  const rx = new RegExp("[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\uFF0B]", "u");
+  const hit = [];
+  for (const f of files) {
+    const t = readFileSync(join(ROOT, f), "utf8");
+    const m = t.match(rx);
+    if (m && !allow.has(m[0].codePointAt(0))) hit.push(f + ":U+" + m[0].codePointAt(0).toString(16).toUpperCase());
+  }
+  hit.length ? bad("emoji di UI: " + hit.join(", ")) : ok(files.length + " berkas UI bebas emoji");
+} catch (e) { bad("emoji gate: " + e.message); }
 
 console.log(fail ? `\nRESULT: FAIL (${fail})` : "\nRESULT: PASS — siap deploy");
 process.exit(fail ? 1 : 0);

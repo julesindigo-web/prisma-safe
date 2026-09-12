@@ -31,7 +31,7 @@ Vercel → *Add New Project* → Import repo → Deploy. Tidak perlu build comma
 `vercel --prod` (produksi). Uji lokal ala-Vercel: `vercel dev`.
 
 Setelah deploy: buka URL → Chrome/Edge menawarkan **Install** (atau tombol
-📲 Install di bar atas) → aplikasi berjalan standalone + offline.
+Install di bar atas) → aplikasi berjalan standalone + offline.
 Endpoint kesehatan: `https://<domain>/api/health` → `{"status":"ok"}`.
 
 ## 25 modul + analitik SMKP (satu pola input → mudah semua level)

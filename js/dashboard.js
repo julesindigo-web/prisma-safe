@@ -23,21 +23,21 @@ function renderDash(){
   var prog=PS.all("program"), cap=prog.length?Math.round(100*prog.reduce(function(a,r){return a+(+r.realisasi||0);},0)/Math.max(1,prog.reduce(function(a,r){return a+(+r.rencana||0);},0))):0;
   var mp=cnt("manpower",function(r){return r.status==="Aktif";});
   var h='<div class="quick no-print">'+
-   [["inspeksi","📋","Lapor Inspeksi","SAP, SKAT, APAR, mess…"],["insiden","⚠","Lapor Kejadian","Near miss, insiden, kerusakan"],
-    ["pica","🛠","Buat PICA","Temuan → tindak lanjut"],["p2h","🚛","Cek P2H","Checklist harian unit"],
-    ["induksi","🎓","Daftarkan Induksi","Karyawan, visitor, kontraktor"],["laporan","📝","Laporan Harian","SFT04 — 2 menit"]].map(function(q){
-    return '<button data-q="'+q[0]+'"><b>'+q[1]+' '+q[2]+'</b><span>'+q[3]+'</span></button>';}).join("")+'</div>';
+   [["inspeksi","Lapor Inspeksi","SAP, SKAT, APAR, mess…","inspect"],["insiden","Lapor Kejadian","Near miss, insiden, kerusakan","incident"],
+    ["pica","Buat PICA","Temuan ke tindak lanjut","pica"],["p2h","Cek P2H","Checklist harian unit","p2h"],
+    ["induksi","Daftarkan Induksi","Karyawan, visitor, kontraktor","induction"],["laporan","Laporan Harian","SFT04 — 2 menit","report"]].map(function(q){
+    return '<button data-q="'+q[0]+'"><span class="q-ic">'+window.ic(q[3],"ic-20")+'</span><span><b>'+q[1]+'</b><span>'+q[2]+'</span></span></button>';}).join("")+'</div>';
   h+='<div class="grid g4">'+
-   [["var(--red)",fatal,"Fatality","Lagging — target NOL"],["var(--orange)",lti,"LTI","Lost Time Injury"],
-    ["var(--amber-d)",near,"Near Miss","Dilaporkan — budaya baik"],["var(--blue)",picaOpen,"PICA Terbuka","Perlu verifikasi & tutup"],
-    ["var(--teal)",insp,"Inspeksi Tercatat","Leading indicator"],["var(--red)",p2hBL,"Unit TIDAK LAYAK","Parkir — larang operasi"],
-    ["var(--violet)",cap+"%","Capaian Program K3LH","Rencana vs realisasi"],["var(--green)",mp,"Manpower Aktif","Terdata di sistem"]
-   ].map(function(k){return '<div class="kpi" style="--kpi-c:'+k[0]+'"><div class="n">'+k[1]+'</div><div class="l"><b>'+k[2]+'</b></div><div class="d">'+k[3]+'</div></div>';}).join("")+'</div>';
-  h+='<div class="grid g2" style="margin-top:16px"><div class="card"><h2>Insiden per kategori</h2><p class="sub">Distribusi semua kejadian tercatat</p>'+bars(group("insiden","kat"))+'</div>'+
-     '<div class="card"><h2>Inspeksi per jenis</h2><p class="sub">Fokus pengawasan lapangan</p>'+bars(group("inspeksi","jenis"))+'</div></div>';
-  h+='<div class="grid g2"><div class="card"><h2>Status PICA</h2><p class="sub">Open harus bergerak ke Close terverifikasi</p>'+
+   [["var(--red)",fatal,"Fatality","Lagging — target NOL","incident"],["var(--orange)",lti,"LTI","Lost Time Injury","clinic"],
+    ["var(--amber-d)",near,"Near Miss","Dilaporkan — budaya baik","eye"],["var(--blue)",picaOpen,"PICA Terbuka","Perlu verifikasi & tutup","pica"],
+    ["var(--teal)",insp,"Inspeksi Tercatat","Leading indicator","inspect"],["var(--red)",p2hBL,"Unit TIDAK LAYAK","Parkir — larang operasi","units"],
+    ["var(--violet)",cap+"%","Capaian Program K3LH","Rencana vs realisasi","program"],["var(--green)",mp,"Manpower Aktif","Terdata di sistem","users"]
+   ].map(function(k){return '<div class="kpi" style="--kpi-c:'+k[0]+'"><span class="kpi-ic">'+window.ic(k[4],"ic-22")+'</span><div class="n">'+k[1]+'</div><div class="l"><b>'+k[2]+'</b></div><div class="d">'+k[3]+'</div></div>';}).join("")+'</div>';
+  h+='<div class="grid g2" style="margin-top:16px"><div class="card"><h2>'+window.ic("chart","ic-18")+'Insiden per kategori</h2><p class="sub">Distribusi semua kejadian tercatat</p>'+bars(group("insiden","kat"))+'</div>'+
+     '<div class="card"><h2>'+window.ic("inspect","ic-18")+'Inspeksi per jenis</h2><p class="sub">Fokus pengawasan lapangan</p>'+bars(group("inspeksi","jenis"))+'</div></div>';
+  h+='<div class="grid g2"><div class="card"><h2>'+window.ic("pica","ic-18")+'Status PICA</h2><p class="sub">Open harus bergerak ke Close terverifikasi</p>'+
      donut([["Open",cnt("pica",function(r){return r.status==="Open";})],["In Progress",cnt("pica",function(r){return r.status==="In Progress";})],["Overdue",cnt("pica",function(r){return r.status==="Overdue";})],["Close",cnt("pica",function(r){return r.status==="Close";})]])+'</div>'+
-     '<div class="card"><h2>Kunjungan klinik per departemen</h2><p class="sub">Surveilans kesehatan kerja</p>'+bars(group("klinik","dept"))+'</div></div>';
+     '<div class="card"><h2>'+window.ic("clinic","ic-18")+'Kunjungan klinik per departemen</h2><p class="sub">Surveilans kesehatan kerja</p>'+bars(group("klinik","dept"))+'</div></div>';
   var recent=[].concat(PS.all("insiden").map(function(r){return["insiden",r.tgl,(r.kat||"")+" — "+(r.lokasi||"")];}),
     PS.all("pica").map(function(r){return["pica",r.tgl,(r.no||"")+" — "+String(r.masalah||"").slice(0,50)];}),
     PS.all("inspeksi").map(function(r){return["inspeksi",r.tgl,(r.jenis||"")+" — "+(r.area||"")];}))
@@ -48,16 +48,16 @@ function renderDash(){
   var expN=0, _nd=new Date(); _nd.setHours(0,0,0,0);
   PS.all("sertifikasi").forEach(function(c){ if(!c.exp) return; var d=Math.round((new Date(c.exp+"T00:00:00")-_nd)/86400000); if(!isNaN(d)&&d<=30) expN++; });
   PS.all("mcu").forEach(function(c){ if(!c.berlaku) return; var d=Math.round((new Date(c.berlaku+"T00:00:00")-_nd)/86400000); if(!isNaN(d)&&d<=30) expN++; });
-  h+='<div class="card" style="border-left:5px solid '+((bd.length||sosO.length)?"#d63a3a":"#15803d")+'"><h2>⚠ Peringatan operasional</h2><div class="toolbar">'
-    +'<span class="chip '+(bd.length?"red":"green")+'">⛔ Breakdown: '+bd.length+'</span>'
-    +'<span class="chip '+(sosO.length?"red":"green")+'">🚨 SOS terbuka: '+sosO.length+'</span>'
-    +'<span class="chip '+(expN?"amber":"green")+'">📜 Kedaluwarsa ≤30h: '+expN+'</span>'
-    +'<span class="chip '+(hzH?"amber":"green")+'">☢ Hazard tinggi/ekstrem: '+hzH+'</span></div>'
+  h+='<div class="card" style="border-left:5px solid '+((bd.length||sosO.length)?"#d63a3a":"#15803d")+'"><h2>'+window.ic("incident","ic-18")+'Peringatan operasional</h2><div class="toolbar">'
+    +'<span class="chip '+(bd.length?"red":"green")+'">'+window.ic("units","ic-14")+'Breakdown: '+bd.length+'</span>'
+    +'<span class="chip '+(sosO.length?"red":"green")+'">'+window.ic("sos","ic-14")+'SOS terbuka: '+sosO.length+'</span>'
+    +'<span class="chip '+(expN?"amber":"green")+'">'+window.ic("sertifikasi","ic-14")+'Kedaluwarsa ≤30h: '+expN+'</span>'
+    +'<span class="chip '+(hzH?"amber":"green")+'">'+window.ic("hazard","ic-14")+'Hazard tinggi/ekstrem: '+hzH+'</span></div>'
     +(bd.length?'<p class="sub">Unit breakdown (DILARANG operasi): <b>'+bd.map(function(u){ return esc(u.nopol); }).join(", ")+'</b></p>':"")
     +'</div>';
-  h+='<div class="card"><h2>Aktivitas terbaru</h2><p class="sub">8 pembaruan terakhir lintas modul</p><div class="timeline">'+
+  h+='<div class="card"><h2>'+window.ic("risk","ic-18")+'Aktivitas terbaru</h2><p class="sub">8 pembaruan terakhir lintas modul</p><div class="timeline">'+
     (recent.map(function(x){return '<div><span class="chip blue">'+esc(x[0])+'</span> <b>'+esc(x[1]||"-")+'</b> — '+esc(x[2])+'</div>';}).join("")||'<div class="empty">Belum ada aktivitas.</div>')+'</div>'+
-    '<div class="toolbar no-print" style="margin-top:12px"><button class="btn sm warn" id="btnExec">🖨 Ringkasan Eksekutif (PDF)</button><span class="hint">1 halaman: KPI + PICA terbuka + unit tidak layak.</span></div></div>';
+    '<div class="toolbar no-print" style="margin-top:12px"><button class="btn sm warn" id="btnExec">'+window.ic("printer","ic-14")+'Ringkasan Eksekutif (PDF)</button><span class="hint">1 halaman: KPI + PICA terbuka + unit tidak layak.</span></div></div>';
   document.getElementById("view").innerHTML=h;
   document.getElementById("pageTitle").textContent="Dashboard K3";
   document.getElementById("pageSub").textContent=PS.db.company.nama+" • "+PS.db.company.site+" • "+PS.total()+" data";
@@ -77,7 +77,7 @@ function execSummary(){
   (function(){ var w=window.open("","_blank","width=900,height=700"); if(!w) return;
     w.document.write('<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Ringkasan Eksekutif</title><style>body{font-family:"Segoe UI",Arial;margin:24px;font-size:13px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:6px 8px;text-align:left}th{background:#eee}.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px;font-size:12px;text-align:center}.sig div{border-top:1px solid #000;padding-top:4px;margin-top:56px}</style></head><body>'+
     '<div style="border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px"><h2 style="margin:0">'+esc(PS.db.company.nama)+' — Ringkasan Eksekutif K3</h2><p>'+esc(PS.db.company.site)+' • '+esc(new Date().toLocaleString("id-ID"))+'</p></div>'+h+
-    '<div class="sig"><div>Dibuat oleh<br>HSE</div><div>Diperiksa oleh<br>Deputy PJO</div><div>Diketahui oleh<br>PJO</div></div><div style="margin:14px 0"><button onclick="window.print()">🖨 Cetak / Simpan PDF</button></div></body></html>');
+    '<div class="sig"><div>Dibuat oleh<br>HSE</div><div>Diperiksa oleh<br>Deputy PJO</div><div>Diketahui oleh<br>PJO</div></div><div style="margin:14px 0"><button onclick="window.print()">Cetak / Simpan PDF</button></div></body></html>');
     w.document.close(); w.focus(); })();
 }
 window.PSD={render:renderDash};

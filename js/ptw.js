@@ -19,7 +19,7 @@ function sigPad(cb){
   var m = window.PSV.openModal("Tanda tangan digital",
     '<p class="sub">Tulis di kotak dengan jari/mouse, lalu simpan.</p><canvas id="sigCv" width="560" height="200" style="width:100%;border:2px dashed #94a3c7;border-radius:12px;touch-action:none;background:#fbfcff"></canvas>' +
     '<div class="fld" style="margin-top:10px"><label>Nama penandatangan *</label><input id="sigNm"></div>',
-    '<button class="btn" data-x2>Batal</button><button class="btn sm" data-cl>Bersihkan</button><button class="btn primary" data-ok>✔ Simpan TTD</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn sm" data-cl>Bersihkan</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan TTD</button>');
   var cv = m.querySelector("#sigCv"), cx = cv.getContext("2d"), draw = false, mark = false;
   cx.lineWidth = 3; cx.lineCap = "round"; cx.strokeStyle = "#0b1530";
   function pos(e){ var b = cv.getBoundingClientRect(); var p = e.touches ? e.touches[0] : e;
@@ -55,11 +55,11 @@ function view(id){
   }).join("") + "</div>";
   var lo = "";
   if(r._loto) lo = "<h3>Checklist LOTO</h3><table class='tbl'><thead><tr><th>Titik isolasi</th><th>Status</th></tr></thead><tbody>" +
-    r._loto.map(function(t, i){ return "<tr><td>" + window.esc(t.item) + "</td><td>" + (t.ok ? "<span class='chip green'>terisolasi ✓</span>" : "<label style='font-size:13px'><input type='checkbox' data-lo='" + i + "'> tandai</label>") + "</td></tr>"; }).join("") + "</tbody></table>" +
+    r._loto.map(function(t, i){ return "<tr><td>" + window.esc(t.item) + "</td><td>" + (t.ok ? "<span class='chip green'>"+window.ic("check","ic-14")+"terisolasi</span>" : "<label style='font-size:13px'><input type='checkbox' data-lo='" + i + "'> tandai</label>") + "</td></tr>"; }).join("") + "</tbody></table>" +
     (r._lotoVer ? "<p>Verifikasi nol-energi: <b>" + window.esc(r._lotoVer) + "</b></p>" : "");
   var m = window.PSV.openModal("Permit — " + (r.no || ""),
     '<dl class="detail">' + kv.map(function(k){ return "<dt>" + window.esc(k[0]) + "</dt><dd>" + window.esc(String(k[1] == null ? "—" : k[1])) + "</dd>"; }).join("") + "</dl>" + ap + lo,
-    '<button class="btn" data-x2>Tutup</button><button class="btn sm" data-vloto>Verifikasi LOTO</button><button class="btn sm warn" data-p>Cetak</button><span style="flex:1"></span><button class="btn sm danger" data-no>Tolak</button><button class="btn sm primary" data-a1>Setujui L1</button><button class="btn sm primary" data-a2>Setujui L2</button><button class="btn sm primary" data-a3>Setujui L3</button>');
+    '<button class="btn" data-x2>Tutup</button><button class="btn sm" data-vloto="">'+window.ic("shield","ic-14")+'Verifikasi LOTO</button><button class="btn sm warn" data-p="">'+window.ic("printer","ic-14")+'Cetak</button><span style="flex:1"></span><button class="btn sm danger" data-no="">'+window.ic("x","ic-14")+'Tolak</button><button class="btn sm primary" data-a1="">'+window.ic("check","ic-14")+'Setujui L1</button><button class="btn sm primary" data-a2="">'+window.ic("check","ic-14")+'Setujui L2</button><button class="btn sm primary" data-a3="">'+window.ic("check","ic-14")+'Setujui L3</button>');
   m.querySelector("[data-x2]").onclick = function(){ window.PSV.closeModal(); refresh(); };
   function refresh(){ window.PSV.renderModule(window.PS_MODULES.permit); }
   function guard(act){ if(!window.RBAC.can(act)){ toast(window.RBAC.deny(act), "err"); return false; } return true; }

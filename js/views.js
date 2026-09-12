@@ -8,7 +8,7 @@ function fmtVal(f,v){ if(v==null||v==="") return "—";
   return String(v); }
 function openModal(title,bodyHTML,footHTML){ var r=document.getElementById("modalRoot");
   r.innerHTML='<div class="mback"><div class="modal" role="dialog" aria-label="'+esc(title)+'"><header><h3>'+esc(title)+
-   '</h3><button class="icon-btn" data-x aria-label="Tutup">✕</button></header><div class="mbody">'+bodyHTML+'</div>'+
+   '</h3><button class="icon-btn" data-x aria-label="Tutup">'+window.ic("x","ic-16")+'</button></header><div class="mbody">'+bodyHTML+'</div>'+
    (footHTML?'<footer>'+footHTML+'</footer>':"")+'</div></div>';
   r.querySelector("[data-x]").onclick=closeModal;
   r.querySelector(".mback").addEventListener("mousedown",function(e){ if(e.target.className==="mback") closeModal(); });
@@ -45,12 +45,12 @@ function renderModule(def){
   var page=rows.slice(st.pg*PER,st.pg*PER+PER);
   var sopts=statusOptions(def);
   var h='<div class="card"><h2>'+esc(def.title)+' <span class="chip grey">'+esc(def.form)+'</span></h2><p class="sub">'+esc(def.sub)+'</p>';
-  h+='<div class="toolbar no-print"><input type="search" id="q" placeholder="🔍 Cari…" value="'+esc(st.q)+'" aria-label="Cari">';
+  h+='<div class="toolbar no-print"><input type="search" id="q" placeholder="Cari data…" value="'+esc(st.q)+'" aria-label="Cari">';
   if(sopts.length) h+='<select id="fq" aria-label="Filter"><option value="">Semua status/kategori</option>'+sopts.map(function(o){return '<option '+(st.f===o?"selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';
-  h+='<button class="btn sm" data-a="csv">⤓ CSV</button><button class="btn sm" data-a="xlsx">⤓ Excel</button><button class="btn sm" data-a="print">🖨 Cetak/PDF</button><span style="flex:1"></span>';
-  if(!window.RBAC || window.RBAC.can("add")) h+='<button class="btn primary" data-a="add">＋ Tambah</button>';
+  h+='<button class="btn sm" data-a="csv">'+window.ic("download","ic-14")+'CSV</button><button class="btn sm" data-a="xlsx">'+window.ic("download","ic-14")+'Excel</button><button class="btn sm" data-a="print">'+window.ic("printer","ic-14")+'Cetak/PDF</button><span style="flex:1"></span>';
+  if(!window.RBAC || window.RBAC.can("add")) h+='<button class="btn primary" data-a="add">'+window.ic("plus","ic-14")+'Tambah</button>';
   h+='</div>';
-  if(!page.length) h+='<div class="empty">'+esc(def.empty)+'</div>';
+  if(!page.length) h+='<div class="empty">'+window.ic("shield","ic-40")+'<p>'+esc(def.empty)+'</p></div>';
   else{ h+='<div class="tbl-wrap"><table class="tbl"><thead><tr><th>No</th>'+def.cols.map(function(c){return "<th>"+esc(c.label)+"</th>";}).join("")+'<th class="no-print">Aksi</th></tr></thead><tbody>';
     page.forEach(function(r,i){ h+='<tr><td>'+(st.pg*PER+i+1)+'</td>'+def.cols.map(function(c){ var t=colText(def,c,r);
         var ch=c.chip?c.chip(r):null; return "<td>"+(ch?'<span class="chip '+ch+'">'+esc(t)+"</span>":esc(t))+"</td>"; }).join("")+
@@ -58,7 +58,7 @@ function renderModule(def){
       (def.key==="p2h"?' <button class="btn sm warn" data-a="cek" data-id="'+r.id+'">Checklist</button>':"")+
       (def.rowActions||[]).map(function(ra){ return ' <button class="btn sm warn" data-a="x:'+ra.k+'" data-id="'+r.id+'">'+ra.label+'</button>'; }).join("")+
       ((!window.RBAC||window.RBAC.can("del"))?' <button class="btn sm danger" data-a="del" data-id="'+r.id+'">Hapus</button>':"")+'</td></tr>'; });
-    h+='</tbody></table></div><div class="pager no-print"><button class="btn sm" data-a="prev" '+(st.pg===0?"disabled":"")+'>‹</button><span>Halaman '+(st.pg+1)+' / '+pages+' • '+rows.length+' data</span><button class="btn sm" data-a="next" '+(st.pg>=pages-1?"disabled":"")+'>›</button></div>'; }
+    h+='</tbody></table></div><div class="pager no-print"><button class="btn sm" data-a="prev" '+(st.pg===0?"disabled":"")+'>'+window.ic("chevL","ic-14")+'</button><span>Halaman '+(st.pg+1)+' / '+pages+' • '+rows.length+' data</span><button class="btn sm" data-a="next" '+(st.pg>=pages-1?"disabled":"")+'>'+window.ic("chevR","ic-14")+'</button></div>'; }
   h+='</div>';
   var el=document.getElementById("view"); el.innerHTML=h;
   el.querySelector("#q").addEventListener("input",function(e){ st.q=e.target.value; st.pg=0; renderModule(def); keepFocus("q"); });
@@ -95,7 +95,7 @@ function formModal(def,rec){
   if(isNew){ rec={}; def.fields.forEach(function(f){ rec[f.k]=f.def==null?"":f.def; }); if(def.fields.find(function(f){return f.k==="tgl";})) rec.tgl=PS.today(); if(def.fields.find(function(f){return f.k==="status";})) rec.status=def.fields.find(function(f){return f.k==="status";}).opts[0]; }
   var m=openModal((isNew?"Tambah — ":"Ubah — ")+def.title,
     riskNote(def,rec)+'<div class="frow">'+def.fields.map(function(f){return fieldInput(f,rec[f.k],rec);}).join("")+'</div>',
-    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok>💾 Simpan</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan</button>');
   m.querySelector("[data-x2]").onclick=closeModal;
   var nilai=m.querySelector('[name="nilai"]'), hasil=m.querySelector('[name="hasil"]');
   if(nilai&&hasil) nilai.addEventListener("input",function(){ var n=+nilai.value||0; hasil.value=n>=80?"Lulus":n>0?"Remedial":"Belum test"; });
@@ -117,7 +117,7 @@ function detailModal(def,r){ if(!r) return;
     r._cek.map(function(c){return '<tr><td>'+esc(c[0])+'</td><td>'+(c[1]==="Baik"?'<span class="chip green">Baik</span>':'<span class="chip red">Rusak</span>')+'</td></tr>';}).join("")+'</tbody></table>'; }
   if(def.key==="induksi"&&r.nilai!==""&&r.nilai!=null) extra='<p>Status kelulusan: <b>'+(+r.nilai>=80?"LULUS (≥80)":"REMEDIAL (<80)")+'</b></p>';
   var m=openModal(def.title+" — detail",'<dl class="detail">'+kv.map(function(k){return "<dt>"+esc(k[0])+"</dt><dd>"+esc(k[1])+"</dd>";}).join("")+'</dl>'+extra,
-   '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p>Cetak lembar ini</button>');
+   '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak lembar ini</button>');
   m.querySelector("[data-x2]").onclick=closeModal;
   m.querySelector("[data-p]").onclick=function(){ PX.printRecord(PS.db.company.nama+" — "+def.title+" ("+def.form+")","ID: "+r.id,kv,extra); };
 }
@@ -129,7 +129,7 @@ function p2hModal(r){ if(!r) return;
    '<p class="sub">Kelompok: <b>'+esc(r.kelompok||"-")+'</b> • Tandai setiap item <b>Baik</b> / <b>Rusak</b>. Hasil tersimpan ke data P2H.</p>'+
    items.map(function(it,i){ var v=cur[it]||"Baik";
      return '<div class="checkline"><div style="flex:1"><b>'+(i+1)+'. '+esc(it)+'</b></div><div class="seg" data-i="'+i+'"><button data-v="Baik" class="'+(v==="Baik"?"on":"")+'">Baik</button><button data-v="Rusak" class="'+(v==="Rusak"?"on bad":"")+'">Rusak</button></div></div>'; }).join(""),
-   '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok>💾 Simpan checklist</button>');
+   '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan checklist</button>');
   m.querySelector("[data-x2]").onclick=closeModal;
   m.querySelectorAll(".seg").forEach(function(sg){ sg.querySelectorAll("button").forEach(function(b){ b.onclick=function(){
     sg.querySelectorAll("button").forEach(function(x){x.classList.remove("on","bad");});

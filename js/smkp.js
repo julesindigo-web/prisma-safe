@@ -70,26 +70,26 @@ function expiring(){
   window.PS.all("sertifikasi").forEach(function(c){ var d = days(c.exp); if(d <= 30) out.push([c.nama + " — " + c.jenis + " (" + (c.exp || "?") + ")", d]); });
   window.PS.all("mcu").forEach(function(c){ var d = days(c.berlaku); if(d <= 30) out.push([c.nama + " — MCU (" + (c.berlaku || "?") + ")", d]); });
   out.sort(function(a, b){ return a[1] - b[1]; });
-  if(!out.length) return '<div class="empty">Nihil kedaluwarsa ≤ 30 hari. 👍</div>';
+  if(!out.length) return '<div class="empty">Nihil kedaluwarsa ≤ 30 hari.</div>';
   return '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Personel — dokumen</th><th>Status</th></tr></thead><tbody>' +
     out.slice(0, 30).map(function(x){ return "<tr><td>" + esc(x[0]) + "</td><td><span class='chip " + (x[1] < 0 ? "red" : "amber") + "'>" + (x[1] < 0 ? "KEDALUWARSA" : x[1] + " hari") + "</span></td></tr>"; }).join("") + "</tbody></table></div>";
 }
 function render(){
   var st = perState(), r = rates(st.bulan), s = r.s;
-  var h = '<div class="card"><h2>SMKP Analytics & KPI</h2><p class="sub">Laju dihitung jujur dari Manhours yang diinput — tanpa MH, laju tampil “—”.</p>'
+  var h = '<div class="card"><h2>'+window.ic("smkp","ic-18")+'SMKP Analytics & KPI</h2><p class="sub">Laju dihitung jujur dari Manhours yang diinput — tanpa MH, laju tampil “—”.</p>'
     + '<div class="toolbar no-print"><label>Periode (YYYY-MM, kosongkan = semua)</label><input id="smBulan" value="' + esc(st.bulan) + '" placeholder="2026-09" style="max-width:140px">'
     + '<button class="btn sm primary" id="smGo">Terapkan</button><span style="flex:1"></span>'
-    + '<button class="btn sm" id="smXlsx">⤓ Excel</button><button class="btn sm warn" id="smKep">🖨 Paket Kepmen 1827</button></div></div>'
+    + '<button class="btn sm" id="smXlsx">'+window.ic("download","ic-14")+'Excel</button><button class="btn sm warn" id="smKep">'+window.ic("printer","ic-14")+'Paket Kepmen 1827</button></div></div>'
     + '<div class="grid g4">'
-    + [["var(--red)", fmt(r.ltifr), "LTIFR", "LTI: " + s.lti + " • MH: " + (r.mh || "—")],
-       ["var(--orange)", fmt(r.trifr), "TRIFR", "LTI+RWC+MTI: " + (s.lti + s.rwc + s.mti)],
-       ["var(--violet)", fmt(r.sr), "Severity Rate", "Hari hilang: " + r.lost],
-       ["var(--red)", s.fatal, "Fatality", "Near miss: " + s.near + " • First aid: " + s.first]]
-      .map(function(k){ return '<div class="kpi" style="--kpi-c:' + k[0] + '"><div class="n">' + k[1] + '</div><div class="l"><b>' + k[2] + '</b></div><div class="d">' + k[3] + '</div></div>'; }).join("") + "</div>"
-    + (r.hasMH || !st.bulan ? "" : '<div class="card"><b>⚠ Manhours periode ' + esc(st.bulan) + ' belum diinput</b> — isi di modul Manhours agar LTIFR/TRIFR/SR terhitung. <button class="btn sm" onclick="location.hash=\'#/manhours\'">Buka Manhours</button></div>')
-    + '<div class="grid g2" style="margin-top:16px"><div class="card"><h2>Heatmap lokasi rawan</h2><p class="sub">Bobot: fatality 5, LTI 3, hazard tinggi 3, temuan 1</p>' + heat() + '</div>'
-    + '<div class="card"><h2>Kedaluwarsa ≤ 30 hari</h2><p class="sub">Simper/KIM/POP/POM/POU/SIO + MCU</p>' + expiring() + '</div></div>'
-    + '<div class="card"><h2>Matriks kompetensi</h2><p class="sub">Personel aktif × sertifikasi (tanggal = masa berlaku)</p>' + matrix() + '</div>';
+    + [["var(--red)", fmt(r.ltifr), "LTIFR", "LTI: " + s.lti + " • MH: " + (r.mh || "—"), "risk"],
+       ["var(--orange)", fmt(r.trifr), "TRIFR", "LTI+RWC+MTI: " + (s.lti + s.rwc + s.mti), "chart"],
+       ["var(--violet)", fmt(r.sr), "Severity Rate", "Hari hilang: " + r.lost, "clock"],
+       ["var(--red)", s.fatal, "Fatality", "Near miss: " + s.near + " • First aid: " + s.first, "incident"]]
+      .map(function(k){ return '<div class="kpi" style="--kpi-c:' + k[0] + '"><span class="kpi-ic">' + window.ic(k[4], "ic-22") + '</span><div class="n">' + k[1] + '</div><div class="l"><b>' + k[2] + '</b></div><div class="d">' + k[3] + '</div></div>'; }).join("") + "</div>"
+    + (r.hasMH || !st.bulan ? "" : '<div class="card"><b>'+window.ic("incident","ic-16")+' Manhours periode ' + esc(st.bulan) + ' belum diinput</b> — isi di modul Manhours agar LTIFR/TRIFR/SR terhitung. <button class="btn sm" onclick="location.hash=\'#/manhours\'">Buka Manhours</button></div>')
+    + '<div class="grid g2" style="margin-top:16px"><div class="card"><h2>'+window.ic("pin","ic-18")+'Heatmap lokasi rawan</h2><p class="sub">Bobot: fatality 5, LTI 3, hazard tinggi 3, temuan 1</p>' + heat() + '</div>'
+    + '<div class="card"><h2>'+window.ic("clock","ic-18")+'Kedaluwarsa ≤ 30 hari</h2><p class="sub">Simper/KIM/POP/POM/POU/SIO + MCU</p>' + expiring() + '</div></div>'
+    + '<div class="card"><h2>'+window.ic("users","ic-18")+'Matriks kompetensi</h2><p class="sub">Personel aktif × sertifikasi (tanggal = masa berlaku)</p>' + matrix() + '</div>';
   document.getElementById("view").innerHTML = h;
   document.getElementById("pageTitle").textContent = "SMKP Analytics & KPI";
   document.getElementById("pageSub").textContent = "Periode: " + (st.bulan || "semua") + " • Kepmen ESDM 1827/2018";
@@ -117,7 +117,7 @@ function kepmen(){
   var w = window.open("", "_blank", "width=900,height=700"); if(!w) return;
   w.document.write('<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Paket SMKP</title><style>body{font-family:"Segoe UI",Arial;margin:24px;font-size:13px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:6px 8px;text-align:left}th{background:#eee}h3{margin:18px 0 8px}.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px;font-size:12px;text-align:center}.sig div{border-top:1px solid #000;padding-top:4px;margin-top:56px}</style></head><body>'
     + '<div style="border-bottom:3px double #000;padding-bottom:10px;margin-bottom:14px"><h2 style="margin:0">' + esc(window.PS.db.company.nama) + ' — Paket Laporan SMKP</h2><p>' + esc(window.PS.db.company.site) + " • " + esc(new Date().toLocaleString("id-ID")) + "</p></div>" + h
-    + '<div class="sig"><div>Dibuat oleh<br>HSE</div><div>Diperiksa oleh<br>Deputy PJO</div><div>Diketahui oleh<br>KTT</div></div><div style="margin:14px 0"><button onclick="window.print()">🖨 Cetak / Simpan PDF</button></div></body></html>');
+    + '<div class="sig"><div>Dibuat oleh<br>HSE</div><div>Diperiksa oleh<br>Deputy PJO</div><div>Diketahui oleh<br>KTT</div></div><div style="margin:14px 0"><button onclick="window.print()">Cetak / Simpan PDF</button></div></body></html>');
   w.document.close(); w.focus();
 }
 window.SMKPR = { render: render, rates: rates, expStatus: expStatus };

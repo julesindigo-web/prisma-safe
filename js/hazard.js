@@ -36,10 +36,10 @@ function onAdd(){
     + '<div class="fld"><label>Severity (1–5) *</label><select name="s">' + S.riskMatrix.severity.map(function(x){ return "<option>" + x[0] + "</option>"; }).join("") + "</select></div>"
     + "</div>"
     + '<div class="card" style="background:#f6f8fc" id="hzPrev">Skor: <b id="hzScore">1 • RENDAH</b></div>'
-    + '<div class="frow"><div class="fld"><label>GPS (opsional)</label><div class="toolbar"><button class="btn sm" id="hzGps" type="button">📍 Ambil GPS</button><span class="hint" id="hzGpsTx">Belum ada koordinat.</span></div></div>'
-    + '<div class="fld"><label>Foto bukti (maks 3, opsional)</label><input id="hzFoto" type="file" accept="image/*" capture="environment" multiple><div class="hint">Dikompresi otomatis di perangkat.</div><div id="hzThumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div></div>';
+    + '<div class="frow"><div class="fld"><label>'+window.ic("pin","ic-14")+'GPS (opsional)</label><div class="toolbar"><button class="btn sm" id="hzGps" type="button">'+window.ic("pin","ic-14")+'Ambil GPS</button><span class="hint" id="hzGpsTx">Belum ada koordinat.</span></div></div>'
+    + '<div class="fld"><label>'+window.ic("camera","ic-14")+'Foto bukti (maks 3, opsional)</label><input id="hzFoto" type="file" accept="image/*" capture="environment" multiple><div class="hint">Dikompresi otomatis di perangkat.</div><div id="hzThumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div></div></div>';
   var m = window.PSV.openModal("Lapor Hazard / Near-Miss (SFT13)", h,
-    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok>💾 Simpan laporan</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan laporan</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;
   var L = m.querySelector('[name="l"]'), Sv = m.querySelector('[name="s"]');
   function prev(){ var lv = levelOf(L.value, Sv.value); m.querySelector("#hzScore").textContent = ((+L.value) * (+Sv.value)) + " • " + lv[0]; }
@@ -84,12 +84,12 @@ function view(id){
     ["Uraian", r.uraian], ["Skor risiko", r.skor + " • " + r.level], ["Status", r.status]];
   if(r.gps) kv.push(["GPS", r.gps.lat + ", " + r.gps.lng + " (±" + r.gps.ak + " m)"]);
   var extra = "";
-  if(r.gps) extra += '<p><a href="https://www.openstreetmap.org/?mlat=' + r.gps.lat + "&mlon=" + r.gps.lng + '#map=16/' + r.gps.lat + "/" + r.gps.lng + '" target="_blank" rel="noopener">🗺 Buka peta (butuh internet)</a></p>';
+  if(r.gps) extra += '<p><a href="https://www.openstreetmap.org/?mlat=' + r.gps.lat + "&mlon=" + r.gps.lng + '#map=16/' + r.gps.lat + "/" + r.gps.lng + '" target="_blank" rel="noopener">'+window.ic("pin","ic-14")+'Buka peta (butuh internet)</a></p>';
   if((r.photos || []).length) extra += "<h3>Foto bukti (" + r.photos.length + ")</h3>" + r.photos.map(function(d){
     return '<a href="' + d + '" target="_blank" rel="noopener"><img src="' + d + '" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #c9d2e4;margin:0 8px 8px 0"></a>'; }).join("");
   var m = window.PSV.openModal("Hazard — detail",
     '<dl class="detail">' + kv.map(function(k){ return "<dt>" + window.esc(k[0]) + "</dt><dd>" + window.esc(String(k[1] == null ? "—" : k[1])) + "</dd>"; }).join("") + "</dl>" + extra,
-    '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p>Cetak lembar ini</button>');
+    '<button class="btn" data-x2>Tutup</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak lembar ini</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;
   m.querySelector("[data-p]").onclick = function(){ window.PX.printRecord("Laporan Hazard (SFT13)", "ID " + r.id, kv, extra); };
 }

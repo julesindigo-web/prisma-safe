@@ -24,7 +24,7 @@ function printHTML(title,sub,bodyHTML){
    '.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:26px;font-size:12px;text-align:center}.sig div{border-top:1px solid #000;padding-top:4px;margin-top:56px}'+
    'h3{margin:18px 0 8px}.mut{color:#555;font-size:12px}.kv{display:grid;grid-template-columns:200px 1fr;gap:4px 10px;margin-bottom:10px}.kv dt{color:#555}.kv dd{margin:0;font-weight:700}'+
    '@media print{.no-print{display:none}} .no-print{margin:14px 0}button{padding:8px 16px;font-size:14px}</style></head><body>'+
-   kopHTML(title,sub)+bodyHTML+sigHTML()+'<div class="no-print"><button onclick="window.print()">🖨 Cetak / Simpan PDF</button></div></body></html>');
+   kopHTML(title,sub)+bodyHTML+sigHTML()+'<div class="no-print"><button onclick="window.print()">Cetak / Simpan PDF</button></div></body></html>');
   w.document.close(); w.focus();
 }
 window.PX = {

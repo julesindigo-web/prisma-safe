@@ -16,7 +16,7 @@ function open(id){
     + [["kontak", "Kontak / kejadian berenergi"], ["langsung", "Penyebab langsung (kondisi & tindakan)"], ["dasar", "Penyebab dasar (faktor pribadi & pekerjaan)"], ["kontrol", "Kebutuhan kontrol / sistem"]].map(function(f){
       return '<div class="fld"><label>' + f[1] + '</label><textarea name="s_' + f[0] + '">' + window.esc(rc.scat[f[0]] || "") + "</textarea></div>"; }).join("") + "</div>";
   var m = window.PSV.openModal("Analisis Akar Masalah", h,
-    '<button class="btn" data-x2>Batal</button><button class="btn warn" data-p>Cetak</button><button class="btn primary" data-ok>💾 Simpan analisis</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn warn" data-p="">'+window.ic("printer","ic-14")+'Cetak</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan analisis</button>');
   function read(){ var o = { whys: [], bones: {}, scat: {} };
     for(var i = 0; i < 5; i++) o.whys.push((m.querySelector('[name="w' + i + '"]').value || "").trim());
     BONES.forEach(function(_, i){ o.bones[i] = (m.querySelector('[name="b' + i + '"]').value || "").trim(); });

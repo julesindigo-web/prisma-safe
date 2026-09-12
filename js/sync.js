@@ -11,7 +11,7 @@ function setEp(v){ var c = cfg(); c.ep = String(v || "").trim(); try{ localStora
 function pending(){ return (window.PS && window.PS.db.outbox ? window.PS.db.outbox.length : 0); }
 function pill(){ var p = document.getElementById("syncPill"); if(!p) return; var n = pending();
   p.className = "chip " + (n ? "amber" : "green");
-  p.textContent = n ? ("⧗ " + n + " antre sync") : "✓ antrean kosong"; }
+  p.innerHTML = n ? (window.ic("sync", "ic-14") + n + " antre sync") : (window.ic("check", "ic-14") + "antrean kosong"); }
 function kick(){
   try{
     var db = window.PS.db; db.outbox = db.outbox || [];

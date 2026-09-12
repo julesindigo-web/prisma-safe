@@ -9,11 +9,11 @@ function sosNumber(){ return (window.PS.db.company && window.PS.db.company.sos) 
 function nowHM(){ var d = new Date(); function p(n){ return String(n).padStart(2, "0"); } return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()); }
 function trigger(){
   if(window.RBAC && !window.RBAC.can("add")){ toast(window.RBAC.deny("membuat SOS"), "err"); return; }
-  var m = window.PSV.openModal("🚨 PANGGILAN DARURAT (SOS)",
+  var m = window.PSV.openModal("PANGGILAN DARURAT (SOS)",
     '<div class="fld"><label>Jenis keadaan darurat *</label><select id="sosJ">' + ["Kecelakaan kerja", "Kebakaran", "Longsor/jatuhan", "Kondisi medis", "Alat berat bahaya", "Lainnya"].map(function(o){ return "<option>" + o + "</option>"; }).join("") + "</select></div>"
     + '<div class="fld"><label>Keterangan lokasi (wajib bila GPS gagal)</label><input id="sosK" placeholder="cth. Hauling Road KM 3"></div>'
     + '<p class="hint">GPS akan diambil otomatis (butuh izin). Data tersimpan di perangkat + siap dibagikan manual.</p>',
-    '<button class="btn" data-x2>Batal</button><button class="btn danger" data-ok>🚨 KIRIM SOS</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn danger" data-ok="">'+window.ic("sos","ic-16")+'KIRIM SOS</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;
   m.querySelector("[data-ok]").onclick = function(){
     var j = m.querySelector("#sosJ").value, k = (m.querySelector("#sosK").value || "").trim();
@@ -36,10 +36,10 @@ function trigger(){
 }
 function beacon(r){
   var txt = "SOS PRISMA-SAFE: " + r.jenis + " @ " + r.gps + " (" + r.tgl + " " + r.jam + ") " + (r.ket || "");
-  var m = window.PSV.openModal("🚨 SOS AKTIF — " + r.jenis,
+  var m = window.PSV.openModal("SOS AKTIF — " + r.jenis,
     '<div class="card" style="border:3px solid #d63a3a;background:#fff5f5"><h2 style="color:#a11">Tetap tenang. Minta bantuan di sekitar & hubungi ruang kontrol.</h2>'
     + "<p><b>Waktu:</b> " + window.esc(r.tgl + " " + r.jam) + "<br><b>Posisi:</b> " + window.esc(r.gps) + "<br><b>Ket:</b> " + window.esc(r.ket || "—") + "</p></div>",
-    '<a class="btn warn" id="sosShare" href="#">⤴ Bagikan posisi</a><a class="btn danger" href="tel:' + window.esc(sosNumber()) + '">📞 Telepon ' + window.esc(sosNumber()) + '</a><span style="flex:1"></span><button class="btn" data-x2>Tutup</button><button class="btn primary" data-ok>✓ Tandai selesai</button>');
+    '<a class="btn warn" id="sosShare" href="#">'+window.ic("share","ic-16")+'Bagikan posisi</a><a class="btn danger" href="tel:' + window.esc(sosNumber()) + '">'+window.ic("phone","ic-16")+'Telepon ' + window.esc(sosNumber()) + '</a><span style="flex:1"></span><button class="btn" data-x2>Tutup</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Tandai selesai</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;
   m.querySelector("#sosShare").onclick = function(e){ e.preventDefault();
     if(navigator.share){ navigator.share({ title: "SOS PRISMA-SAFE", text: txt }).catch(function(){}); }
@@ -56,7 +56,7 @@ function checkin(id){
     + '<div class="tbl-wrap" style="max-height:320px"><table class="tbl"><tbody>' + people.map(function(p){
       return "<tr><td><label><input type='checkbox' data-nm=\"" + window.esc(p.nama) + "\"" + (cur[p.nama] ? " checked" : "") + "> <b>" + window.esc(p.nama) + "</b> <span class='hint'>" + window.esc(p.dept || "") + "</span></label></td></tr>"; }).join("")
     + "</tbody></table></div>",
-    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok>💾 Simpan absensi</button>');
+    '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan absensi</button>');
   m.querySelector("[data-x2]").onclick = window.PSV.closeModal;
   m.querySelector("[data-ok]").onclick = function(){
     var kode = (m.querySelector("#muKode").value || "").trim();

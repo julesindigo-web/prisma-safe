@@ -5,7 +5,7 @@ var CACHE = "prisma-safe-v1.1.0";
 var PRECACHE = [
   "/", "/index.html", "/offline.html", "/manifest.webmanifest",
   "/css/app.css",
-  "/js/seed.js", "/js/store.js", "/js/exports.js", "/js/schema.js",
+  "/js/seed.js", "/js/icons.js", "/js/store.js", "/js/exports.js", "/js/schema.js",
   "/js/views.js", "/js/dashboard.js", "/js/hazard.js", "/js/ptw.js", "/js/rca.js",
   "/js/smkp.js", "/js/sos.js", "/js/audit.js", "/js/rbac.js", "/js/sync.js", "/js/idb.js",
   "/js/app.js", "/js/pwa.js",

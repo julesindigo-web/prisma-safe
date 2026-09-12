@@ -2,13 +2,13 @@
 (function(){
 "use strict";
 var ORDER=["dashboard","laporan","inspeksi","pica","insiden","ibpr","jsa","induksi","p2h","permit","manpower","klinik","apd","program","mom","regulasi","dokumen","hazard","units","fatigue","mcu","tele","manhours","muster","sos","sertifikasi","smkp","set"];
-var ICONS={dashboard:"#0e9f8a",laporan:"#2456d6",inspeksi:"#2456d6",pica:"#e07b1a",insiden:"#d63a3a",ibpr:"#6d3fd4",jsa:"#6d3fd4",induksi:"#0e9f8a",p2h:"#e07b1a",permit:"#6d3fd4",manpower:"#0e9f8a",klinik:"#0e9f8a",apd:"#e07b1a",program:"#2456d6",mom:"#5b6480",regulasi:"#5b6480",dokumen:"#5b6480",hazard:"#d63a3a",units:"#e07b1a",fatigue:"#0e9f8a",mcu:"#0e9f8a",tele:"#2456d6",manhours:"#2456d6",muster:"#d63a3a",sos:"#d63a3a",sertifikasi:"#0e9f8a",smkp:"#f5b301",set:"#5b6480"};
+var NIC={dashboard:"dashboard",laporan:"report",inspeksi:"inspect",pica:"pica",insiden:"incident",ibpr:"risk",jsa:"jsa",induksi:"induction",p2h:"p2h",permit:"permit",manpower:"users",klinik:"clinic",apd:"apd",program:"program",mom:"mom",regulasi:"regulasi",dokumen:"dokumen",hazard:"hazard",units:"units",fatigue:"fatigue",mcu:"mcu",tele:"tele",manhours:"manhours",muster:"muster",sos:"sos",sertifikasi:"sertifikasi",smkp:"smkp",set:"settings"};
 function title(k){ return k==="dashboard"?"Dashboard":k==="set"?"Pengaturan":(window.PS_MODULES[k]?window.PS_MODULES[k].title:k); }
 function buildNav(){ var nav=document.getElementById("nav"), h="";
   window.PS_GROUPS.forEach(function(g){ h+='<div class="nav-g">'+g+'</div>';
     Object.keys(window.PS_MODULES).forEach(function(k){ var d=window.PS_MODULES[k]; if(d.group!==g) return;
-      h+='<button class="nav-it" data-r="'+k+'"><span class="dot" style="background:'+(ICONS[k]||"#54678f")+'"></span>'+esc(d.title)+'<small>'+PS.count(k)+'</small></button>'; }); });
-  h+='<div class="nav-g">SISTEM</div><button class="nav-it" data-r="smkp"><span class="dot" style="background:#f5b301"></span>SMKP Analytics & KPI</button><button class="nav-it" data-r="set"><span class="dot" style="background:#8ea0c2"></span>Pengaturan & Panduan</button>';
+      h+='<button class="nav-it" data-r="'+k+'"><span class="nav-ic">'+window.ic(NIC[k]||"report","ic-18")+'</span>'+esc(d.title)+'<small>'+PS.count(k)+'</small></button>'; }); });
+  h+='<div class="nav-g">SISTEM</div><button class="nav-it" data-r="smkp"><span class="nav-ic">'+window.ic("smkp","ic-18")+'</span>SMKP Analytics & KPI</button><button class="nav-it" data-r="set"><span class="nav-ic">'+window.ic("settings","ic-18")+'</span>Pengaturan & Panduan</button>';
   nav.innerHTML=h;
   nav.querySelectorAll("[data-r]").forEach(function(b){ b.onclick=function(){ location.hash="#/"+b.dataset.r; document.body.classList.remove("nav-open"); }; });
 }
@@ -16,21 +16,21 @@ function markNav(r){ document.querySelectorAll(".nav-it").forEach(function(b){ b
   document.getElementById("footStat").textContent=PS.total()+" data • tersimpan otomatis lokal"; }
 function renderSet(){
   var c=PS.db.company;
-  var h='<div class="card"><h2>Pengaturan & Panduan</h2><p class="sub">Profil kop laporan, pencadangan data, dan panduan per level pengguna.</p>'+
+  var h='<div class="card"><h2>'+window.ic("settings","ic-18")+'Pengaturan & Panduan</h2><p class="sub">Profil kop laporan, pencadangan data, dan panduan per level pengguna.</p>'+
   '<div class="frow"><div class="fld"><label>Nama perusahaan</label><input id="cNama" value="'+esc(c.nama)+'"></div>'+
   '<div class="fld"><label>Site / lokasi</label><input id="cSite" value="'+esc(c.site)+'"></div>'+
   '<div class="fld"><label>No. telepon darurat (tombol SOS)</label><input id="cSos" value="'+esc(c.sos || "112")+'"></div></div>'+
-  '<div class="toolbar no-print"><button class="btn primary" id="cSave">💾 Simpan profil</button></div></div>'+
-  '<div class="grid g2"><div class="card"><h2>Backup & Restore</h2><p class="sub">Seluruh data tersimpan lokal di browser perangkat ini. Unduh backup JSON secara berkala.</p>'+
-  '<div class="toolbar"><button class="btn sm" id="bJson">⤓ Unduh backup (JSON)</button><button class="btn sm" id="bXlsx">⤓ Semua modul (Excel)</button><button class="btn sm danger" id="bReset">⟲ Kembalikan data awal</button></div>'+
+  '<div class="toolbar no-print"><button class="btn primary" id="cSave">'+window.ic("check","ic-14")+'Simpan profil</button></div></div>'+
+  '<div class="grid g2"><div class="card"><h2>'+window.ic("download","ic-18")+'Backup & Restore</h2><p class="sub">Seluruh data tersimpan lokal di browser perangkat ini. Unduh backup JSON secara berkala.</p>'+
+  '<div class="toolbar"><button class="btn sm" id="bJson">'+window.ic("download","ic-14")+'Unduh backup (JSON)</button><button class="btn sm" id="bXlsx">'+window.ic("download","ic-14")+'Semua modul (Excel)</button><button class="btn sm danger" id="bReset">'+window.ic("sync","ic-14")+'Kembalikan data awal</button></div>'+
   '<p class="hint">Tombol Restore ada di bar atas. File backup berekstensi .json dari aplikasi ini.</p></div>'+
-  '<div class="card"><h2>Jejak Audit (hash-chain)</h2><p class="sub" id="auSub"></p><div class="toolbar no-print"><button class="btn sm" id="auVer">✓ Verifikasi rantai</button><button class="btn sm" id="auCsv">⤓ Ekspor CSV</button></div><div class="tbl-wrap" style="max-height:300px"><table class="tbl"><thead><tr><th>#</th><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Modul</th><th>Detail</th><th>Hash</th></tr></thead><tbody id="auBody"></tbody></table></div></div>'+
-  '<div class="card"><h2>Sinkronisasi (outbox)</h2><p class="sub">Tanpa endpoint, data tetap lokal + backup manual. Isi endpoint untuk mengaktifkan kirim antrean.</p><div class="frow"><div class="fld"><label>Endpoint sync (POST JSON, opsional)</label><input id="syEp" placeholder="https://domain-anda/api/sync"></div></div><div class="toolbar no-print"><button class="btn sm primary" id="sySave">Simpan endpoint</button><button class="btn sm" id="syGo">⇪ Kirim antrean sekarang</button></div></div>'+
-  '<div class="card"><h2>Katalog referensi bawaan</h2><p class="sub">Disarikan dari '+ 'D:\\ALL ABOUT WORK'+' — tanpa ada kategori yang dilewatkan.</p>'+
+  '<div class="card"><h2>'+window.ic("shield","ic-18")+'Jejak Audit (hash-chain)</h2><p class="sub" id="auSub"></p><div class="toolbar no-print"><button class="btn sm" id="auVer">'+window.ic("check","ic-14")+'Verifikasi rantai</button><button class="btn sm" id="auCsv">'+window.ic("download","ic-14")+'Ekspor CSV</button></div><div class="tbl-wrap" style="max-height:300px"><table class="tbl"><thead><tr><th>#</th><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Modul</th><th>Detail</th><th>Hash</th></tr></thead><tbody id="auBody"></tbody></table></div></div>'+
+  '<div class="card"><h2>'+window.ic("sync","ic-18")+'Sinkronisasi (outbox)</h2><p class="sub">Tanpa endpoint, data tetap lokal + backup manual. Isi endpoint untuk mengaktifkan kirim antrean.</p><div class="frow"><div class="fld"><label>Endpoint sync (POST JSON, opsional)</label><input id="syEp" placeholder="https://domain-anda/api/sync"></div></div><div class="toolbar no-print"><button class="btn sm primary" id="sySave">'+window.ic("check","ic-14")+'Simpan endpoint</button><button class="btn sm" id="syGo">'+window.ic("upload","ic-14")+'Kirim antrean sekarang</button></div></div>'+
+  '<div class="card"><h2>'+window.ic("dokumen","ic-18")+'Katalog referensi bawaan</h2><p class="sub">Disarikan dari '+ 'D:\\ALL ABOUT WORK'+' — tanpa ada kategori yang dilewatkan.</p>'+
   '<div class="toolbar"><span class="chip blue">'+PS.count("dokumen")+' formulir</span><span class="chip blue">'+window.PRISMA_SEED.inspectionTypes.length+' jenis inspeksi</span><span class="chip blue">'+window.PRISMA_SEED.units.length+' jenis unit</span><span class="chip blue">'+window.PRISMA_SEED.materiInduksi.length+' modul induksi</span><span class="chip blue">'+PS.count("regulasi")+' regulasi</span><span class="chip blue">7 elemen SMKP</span></div></div></div>'+
-  '<div class="grid g3"><div class="card"><h2>🟢 Operator / Pengawas</h2><p class="sub">Aktifkan <b>Mode Mudah</b>, lalu pakai tombol besar di Dashboard: Lapor Inspeksi → isi 4 kolom → Simpan. P2H wajib checklist setiap shift.</p></div>'+
-  '<div class="card"><h2>🟡 HSE Officer</h2><p class="sub">Verifikasi PICA sampai Close, investigasi insiden (SFT07), pantau IBPR risiko EKSTREM/TINGGI, dan unduh Weekly Report via Cetak/PDF per modul.</p></div>'+
-  '<div class="card"><h2>🔵 PJO / Manajemen</h2><p class="sub">Baca Dashboard → Ringkasan Eksekutif (1 halaman PDF) untuk rapat. Target: Zero Fatality & LTI, PICA overdue = 0, unit tidak layak = 0.</p></div></div>';
+  '<div class="grid g3"><div class="card"><h2><span class="sdot g"></span>Operator / Pengawas</h2><p class="sub">Aktifkan <b>Mode Mudah</b>, lalu pakai tombol besar di Dashboard: Lapor Inspeksi → isi 4 kolom → Simpan. P2H wajib checklist setiap shift.</p></div>'+
+  '<div class="card"><h2><span class="sdot y"></span>HSE Officer</h2><p class="sub">Verifikasi PICA sampai Close, investigasi insiden (SFT07), pantau IBPR risiko EKSTREM/TINGGI, dan unduh Weekly Report via Cetak/PDF per modul.</p></div>'+
+  '<div class="card"><h2><span class="sdot b"></span>PJO / Manajemen</h2><p class="sub">Baca Dashboard → Ringkasan Eksekutif (1 halaman PDF) untuk rapat. Target: Zero Fatality & LTI, PICA overdue = 0, unit tidak layak = 0.</p></div></div>';
   document.getElementById("view").innerHTML=h;
   document.getElementById("pageTitle").textContent="Pengaturan";
   document.getElementById("pageSub").textContent="Profil • backup • panduan";
@@ -61,8 +61,8 @@ function route(){ var r=(location.hash||"#/dashboard").replace("#/","")||"dashbo
   markNav(r);
   document.getElementById("view").focus({preventScroll:true});
   try { window.scrollTo(0, 0); } catch (_) { /* webview lama tanpa scrollTo */ } }
-function quickAdd(){ var items=[["inspeksi","📋 Lapor Inspeksi"],["insiden","⚠ Lapor Kejadian"],["hazard","☢ Lapor Hazard"],["pica","🛠 Buat PICA"],["p2h","🚛 Cek P2H"],["fatigue","😴 Cek Fatigue"],["induksi","🎓 Induksi"],["laporan","📝 Laporan Harian"],["klinik","🏥 Kunjungan Klinik"],["mom","🤝 MoM / P5M"]];
-  var m=PSV.openModal("Input Cepat — mau mencatat apa?",'<div class="quick">'+items.map(function(q){return '<button data-q="'+q[0]+'"><b>'+q[1]+'</b></button>';}).join("")+'</div>',"");
+function quickAdd(){ var items=[["inspeksi","Lapor Inspeksi","inspect"],["insiden","Lapor Kejadian","incident"],["hazard","Lapor Hazard","hazard"],["pica","Buat PICA","pica"],["p2h","Cek P2H","p2h"],["fatigue","Cek Fatigue","fatigue"],["induksi","Induksi","induction"],["laporan","Laporan Harian","report"],["klinik","Kunjungan Klinik","clinic"],["mom","MoM / P5M","mom"]];
+  var m=PSV.openModal("Input Cepat — mau mencatat apa?",'<div class="quick">'+items.map(function(q){return '<button data-q="'+q[0]+'"><span class="q-ic">'+window.ic(q[2],"ic-20")+'</span><span><b>'+q[1]+'</b></span></button>';}).join("")+'</div>',"");
   m.querySelectorAll("[data-q]").forEach(function(b){ b.onclick=function(){ PSV.closeModal(); location.hash="#/"+b.dataset.q;
     setTimeout(function(){ var btn=document.querySelector('#view [data-a="add"]'); if(btn) btn.click(); },250); }; }); }
 function boot(){
