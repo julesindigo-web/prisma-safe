@@ -69,7 +69,7 @@ mod("ibpr","IBPR / HIRADC","ANALISIS RISIKO","Identifikasi bahaya, penilaian ris
  {t:"select",k:"dept",label:"Departemen",req:1,opts:D},{t:"text",k:"aktivitas",label:"Aktivitas / pekerjaan",req:1},
  {t:"textarea",k:"bahaya",label:"Bahaya & risiko",req:1},
  {t:"select",k:"l0",label:"L awal (1–5)",req:1,opts:["1","2","3","4","5"]},{t:"select",k:"s0",label:"S awal (1–5)",req:1,opts:["1","2","3","4","5"]},
- {t:"textarea",k:"kontrol",label:"Pengendalian (hierarki)",req:1,hint:"Eliminasi → Substitusi → Engineering → Administratif → APD"},
+ {t:"textarea",k:"kontrol",label:"Pengendalian (hierarki)",req:1,hint:S.hierarchy.join(" → ")},
  {t:"select",k:"l1",label:"L sisa (1–5)",req:1,opts:["1","2","3","4","5"]},{t:"select",k:"s1",label:"S sisa (1–5)",req:1,opts:["1","2","3","4","5"]},
  {t:"text",k:"pic",label:"Penanggung jawab"},{t:"date",k:"tgl",label:"Tanggal kajian"},
  {t:"text",k:"sumber",label:"Sumber / dokumen"}

@@ -65,7 +65,7 @@ Batas aman: 15 MB/berkas, inline ≤700 KB selebihnya ke IndexedDB,
 executable (.exe/.bat/.ps1/dsb) ditolak, pagu rekor ~2 MB. Peran Auditor
 read-only (boleh membuka/mengunduh, tak boleh menambah/menghapus).
 
-## Cakupan uji (85 checks, `npm test`)
+## Cakupan uji (86 checks, `npm test`)
 
 `npm install` sekali, lalu `npm test` (jsdom, hermetik tanpa internet)
 dan `npm run check` (gerbang rilis). Yang diuji: boot, 25/25 modul render,

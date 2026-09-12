@@ -454,6 +454,36 @@ try {
   (window.PS.count("dokumen") === 44 && window.PS.count("manpower") === 6 && window.PS.db.audit.length === 0 && window.PS.db.outbox.length === 0) ? ok("reset -> seed murni") : bad("reset gagal");
 } catch (e) { bad("sistem/analitik/batas: " + (e && e.message)); }
 
+// [Q] audit kelas ter-render vs CSS (tanpa kelas yatim visual)
+try {
+  var cssT = readFileSync(join(ROOT, "css/app.css"), "utf8");
+  var defC = {};
+  (cssT.match(/\.([a-zA-Z][a-zA-Z0-9_-]*)(?=[\s,{.:#>~+\[])/g) || []).forEach(function(s){ defC[s.slice(1)] = 1; });
+  ["on", "bad"].forEach(function(c){ defC[c] = 1; });
+  var seen = {};
+  function harvest(){ window.document.querySelectorAll("#view [class], #modalRoot [class], .top [class], .side [class], .foot [class]").forEach(function(el){
+    String(el.getAttribute("class") || "").split(/\s+/).forEach(function(c){ if(c) seen[c] = 1; }); }); }
+  window.PSD.render(); harvest();
+  Object.keys(window.PS_MODULES).forEach(function(k){ window.PSV.renderModule(window.PS_MODULES[k]); harvest(); });
+  window.SMKPR.render(); harvest();
+  function tempPut(m, o){ o.id = o.id || window.PS.uid("TMP"); window.PS.put(m, o); return o.id; }
+  window.PSV.renderModule(window.PS_MODULES.inspeksi);
+  window.document.querySelector('#view [data-a="add"]').click(); harvest(); window.PSV.closeModal();
+  var tmpId = tempPut("p2h", { kelompok: "Ringan (LV)", unit: "LV", nopol: "TMP-01", operator: "T", tgl: "2026-09-12", hasil: "LAYAK operasi" });
+  window.PSV.renderModule(window.PS_MODULES.p2h);
+  window.document.querySelector('#view [data-a="cek"]').click(); harvest(); window.PSV.closeModal();
+  var pmId = tempPut("permit", { no: "TMP", jenis: "Hot Work (Pekerjaan Panas)", lokasi: "L", mulai: "2026-09-12", selesai: "2026-09-13", uraian: "u", status: "Diajukan" });
+  window.PTW.view(pmId); harvest(); window.PSV.closeModal();
+  window.HAZARD.add(); harvest(); window.PSV.closeModal();
+  window.SOSM.checkin(window.PS.all("muster")[0].id); harvest(); window.PSV.closeModal();
+  window.FILEU.open("dokumen", window.PS.all("dokumen")[0].id); harvest(); window.PSV.closeModal();
+  var incQ = tempPut("insiden", { tgl: "2026-09-12", kat: "Near Miss (Hampir Bahaya)", lokasi: "L", kronologi: "u", status: "Open", oleh: "T" });
+  window.RCA.open(incQ); harvest(); window.PSV.closeModal();
+  window.PS.del("p2h", tmpId); window.PS.del("permit", pmId); window.PS.del("insiden", incQ);
+  var orphan = Object.keys(seen).filter(function(c){ return !defC[c] && !/^ic(-\d+)?$/.test(c); });
+  orphan.length ? bad("kelas yatim ter-render: " + orphan.join(",")) : ok("0 kelas yatim dari " + Object.keys(seen).length + " kelas ter-render");
+} catch (e) { bad("audit kelas render: " + (e && e.message)); }
+
 console.log(fail ? `\nDOM-TEST: FAIL (${fail})` : `\nDOM-TEST: PASS (${pass} checks)`);
 if (errors.length) console.log("js errors tambahan: " + errors.slice(0, 3).join(" | "));
 process.exit(fail ? 1 : 0);
