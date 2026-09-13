@@ -61,11 +61,11 @@ function renderModule(def){
   else{ h+='<div class="tbl-wrap"><table class="tbl"><thead><tr><th>No</th>'+def.cols.map(function(c){return "<th>"+esc(c.label)+"</th>";}).join("")+'<th class="no-print">Aksi</th></tr></thead><tbody>';
     page.forEach(function(r,i){ h+='<tr><td>'+(st.pg*PER+i+1)+'</td>'+def.cols.map(function(c){ var t=colText(def,c,r);
         var ch=c.chip?c.chip(r):null; return "<td>"+(ch?'<span class="chip '+ch+'">'+esc(t)+"</span>":esc(t))+"</td>"; }).join("")+
-      '<td class="no-print" style="white-space:nowrap"><button class="btn sm" data-a="view" data-id="'+r.id+'">Lihat</button> <button class="btn sm" data-a="edit" data-id="'+r.id+'">Ubah</button>'+
-      (def.key==="p2h"?' <button class="btn sm warn" data-a="cek" data-id="'+r.id+'">Checklist</button>':"")+
-      (def.rowActions||[]).map(function(ra){ return ' <button class="btn sm warn" data-a="x:'+ra.k+'" data-id="'+r.id+'">'+ra.label+'</button>'; }).join("")+
-      ' <button class="btn sm" data-a="x:file" data-id="'+r.id+'">'+window.ic("dokumen","ic-14")+'Berkas'+(((r._files||[]).length)?' ('+r._files.length+')':"")+'</button>'+
-      ((!window.RBAC||window.RBAC.can("del"))?' <button class="btn sm danger" data-a="del" data-id="'+r.id+'">Hapus</button>':"")+'</td></tr>'; });
+       '<td class="no-print"><div class="act"><button class="btn sm" data-a="view" data-id="'+r.id+'">Lihat</button><button class="btn sm" data-a="edit" data-id="'+r.id+'">Ubah</button>'+
+      (def.key==="p2h"?'<button class="btn sm warn" data-a="cek" data-id="'+r.id+'">Checklist</button>':"")+
+      (def.rowActions||[]).map(function(ra){ return '<button class="btn sm warn" data-a="x:'+ra.k+'" data-id="'+r.id+'">'+ra.label+'</button>'; }).join("")+
+      '<button class="btn sm" data-a="x:file" data-id="'+r.id+'">'+window.ic("dokumen","ic-14")+'Berkas'+(((r._files||[]).length)?'<span class="badge">'+r._files.length+'</span>':"")+'</button>'+
+      ((!window.RBAC||window.RBAC.can("del"))?'<button class="btn sm danger" data-a="del" data-id="'+r.id+'">Hapus</button>':"")+'</div></td></tr>'; });
     h+='</tbody></table></div><div class="pager no-print"><button class="btn sm" data-a="prev" '+(st.pg===0?"disabled":"")+'>'+window.ic("chevL","ic-14")+'</button><span>Halaman '+(st.pg+1)+' / '+pages+' • '+rows.length+' data</span><button class="btn sm" data-a="next" '+(st.pg>=pages-1?"disabled":"")+'>'+window.ic("chevR","ic-14")+'</button></div>'; }
   h+='</div>';
   var el=document.getElementById("view"); el.innerHTML=h;

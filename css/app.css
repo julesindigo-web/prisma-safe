@@ -57,7 +57,7 @@ body{margin:0;font:400 var(--fs)/1.6 "Segoe UI",system-ui,-apple-system,Roboto,"
 .btn.warn{background:var(--amber);border-color:var(--amber);color:#1a1405}
 .btn.danger{background:#fdeaea;border-color:#f3c1c1;color:#a11}
 .btn.ghost{background:#fff}
-.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.sm{padding:6px 12px;font-size:12.5px;border-radius:10px;min-height:34px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px;cursor:pointer}
 .only-mobile{display:none}
@@ -231,7 +231,12 @@ body.easy .side{width:100%}
 .toast{animation:slideIn .25s ease}
 @keyframes slideIn{from{opacity:0;transform:translateX(18px)}}
 /* tabel premium */
-.tbl-wrap{box-shadow:var(--sh2)}
+.tbl-wrap{box-shadow:var(--sh2);overflow-x:auto}
+.act{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}
+.act .btn.sm{flex:none;line-height:1}
+.act .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:rgba(0,0,0,.11);font-size:11px;font-weight:800;margin-left:4px}
+.tbl th:last-child,.tbl td:last-child{white-space:nowrap}
+@media(max-width:860px){.act{flex-wrap:nowrap;overflow-x:auto;max-width:62vw;padding-bottom:2px;-webkit-overflow-scrolling:touch}}
 .tbl th{background:rgba(246,248,252,.94);backdrop-filter:blur(4px);z-index:1}
 .tbl tbody tr{transition:background .12s ease}
 /* SOS */
