@@ -147,7 +147,6 @@ mod("klinik","Klinik & Kesehatan","PERSONEL & KESEHATAN","Kunjungan klinik, data
  {t:"date",k:"tgl",label:"Tanggal",req:1},{t:"text",k:"nama",label:"Nama pasien (inisial bila sensitif)",req:1},
  {t:"select",k:"dept",label:"Departemen",opts:D}, {t:"text",k:"diagnosa",label:"Diagnosa sementara / keluhan",req:1},
  {t:"select",k:"kaitan",label:"Kaitan kerja",req:1,opts:["Kunjungan umum","Dugaan PAK — investigasi lanjut","Kecelakaan kerja","Kontrol ulang"]},
- {t:"select",k:"kaitan",label:"Kaitan kerja",req:1,opts:["Kunjungan umum","Dugaan PAK — investigasi lanjut","Kecelakaan kerja","Kontrol ulang"]},
  {t:"select",k:"tindak",label:"Tindak lanjut",opts:["Rawat jalan","Observasi","Light duty","Rujuk RS","Rujuk gigi","Istirahat (sick leave)","MCU ulang","Edukasi"]},
  {t:"textarea",k:"cat",label:"Catatan"}
 ],[
