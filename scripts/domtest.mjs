@@ -532,6 +532,123 @@ try {
   window.PS.del("inspeksi", frec.id);
 } catch (e) { bad("foto/ekspor komprehensif: " + (e && e.message)); }
 
+// [S] 4 fitur baru tanpa celah: import/template + filter tanggal + tren + notifikasi + taut Simper
+try {
+  // S1 template & import tombol
+  window.PSV.renderModule(window.PS_MODULES.inspeksi);
+  var hasTpl = !!window.document.querySelector('#view [data-a="tpl"]');
+  var hasImp = !!window.document.querySelector('#view [data-a="imp"]');
+  (hasTpl && hasImp) ? ok("toolbar: Template + Import ada") : bad("toolbar import hilang");
+  window.IMPORT && typeof window.IMPORT.template==="function" && typeof window.IMPORT.open==="function" ? ok("IMPORT API lengkap") : bad("IMPORT API");
+  // template benar: stub writeFile tangkap header
+  var capName=""; var origWF = window.XLSX.writeFile;
+  window.XLSX.writeFile = function(wb, name){ capName=name; };
+  window.IMPORT.template(window.PS_MODULES.pica);
+  (/template.*pica/i.test(capName) && capName.endsWith(".xlsx")) ? ok("template pica terunduh (.xlsx)") : bad("template pica: "+capName);
+  window.XLSX.writeFile = origWF;
+  // import alur minimal: buat workbook 2 baris pica lalu preview (tanpa file input asli)
+  // bangun workbook via XLSX lalu baca balik sebagai import
+  (function(){
+    var def=window.PS_MODULES.pica, fds=def.fields.filter(function(f){return f.t!=="photo" && f.k!=="_cek";});
+    var headers=fds.map(function(f){return f.label+(f.req?" *":"");});
+    var row=fds.map(function(f){
+      if(f.k==="no") return "PICA-IMP-001";
+      if(f.k==="masalah") return "Uji import massal";
+      if(f.k==="pic") return "UJI";
+      if(f.k==="sumber") return f.opts?f.opts[0]:"";
+      if(f.k==="tgl"||f.k==="target") return "2026-09-12";
+      if(f.k==="status") return "Open";
+      return "uji";
+    });
+    var ws=window.XLSX.utils.aoa_to_sheet([headers, row]);
+    var wb=window.XLSX.utils.book_new(); window.XLSX.utils.book_append_sheet(wb,ws,"Sheet1");
+    var buf=window.XLSX.write(wb,{type:"array", bookType:"xlsx"});
+    // simulasikan FileReader path: langsung panggil logika preview via IMPORT.open's inner? Uji manual parse
+    var wb2=window.XLSX.read(buf,{type:"array"});
+    var rows=window.XLSX.utils.sheet_to_json(wb2.Sheets[wb2.SheetNames[0]],{header:1,defval:""});
+    (rows.length===2 && rows[0].length===headers.length) ? ok("XLSX round-trip ok ("+headers.length+" kolom)") : bad("sheet_to_json");
+  })();
+  // S2 filter tanggal granular
+  window.PSV.renderModule(window.PS_MODULES.inspeksi);
+  var hasD1 = !!window.document.querySelector('#view #d1');
+  var hasD2 = !!window.document.querySelector('#view #d2');
+  (hasD1 && hasD2) ? ok("filter tanggal Dari/s/d ada") : bad("filter tanggal hilang");
+  // isi 2 baris beda tanggal lalu filter
+  var idA=window.PS.uid("TST"), idB=window.PS.uid("TST");
+  window.PS.put("inspeksi",{id:idA,tgl:"2026-09-01",jenis:window.PRISMA_SEED.inspectionTypes[0],area:"UJI-A",oleh:"UJI",n:0,krit:"Nihil",uraian:"uji",status:"Open"});
+  window.PS.put("inspeksi",{id:idB,tgl:"2026-09-20",jenis:window.PRISMA_SEED.inspectionTypes[0],area:"UJI-B",oleh:"UJI",n:0,krit:"Nihil",uraian:"uji",status:"Open"});
+  window.PSV.renderModule(window.PS_MODULES.inspeksi);
+  var d1El=window.document.querySelector('#view #d1');
+  d1El.value="2026-09-10"; d1El.dispatchEvent(new window.Event("change",{bubbles:true}));
+  await new Promise((r)=>setTimeout(r,50));
+  var rowsAfter = window.document.querySelectorAll(".tbl tbody tr").length;
+  // harus menyaring UJI-A keluar, hanya UJI-B + data lain setelah 10 Sep
+  var hasA = window.document.getElementById("view").textContent.includes("UJI-A");
+  var hasB = window.document.getElementById("view").textContent.includes("UJI-B");
+  (!hasA && hasB) ? ok("filter Dari 2026-09-10 menyaring benar") : bad("filter tanggal: hasA="+hasA+" hasB="+hasB);
+  d1El.value=""; d1El.dispatchEvent(new window.Event("change",{bubbles:true}));
+  await new Promise((r)=>setTimeout(r,50));
+  window.PS.del("inspeksi",idA); window.PS.del("inspeksi",idB);
+  // S3 tren LTIFR 12 bulan di SMKP
+  window.SMKPR.render();
+  var viewHTML = window.document.getElementById("view").innerHTML;
+  (/Tren LTIFR/.test(viewHTML) && /viewBox="0 0 740 120"/.test(viewHTML)) ? ok("tren LTIFR 12 bulan ter-render (SVG)") : bad("tren LTIFR hilang");
+  // S4 pusat notifikasi
+  var bell = window.document.getElementById("notifBell"), badge=window.document.getElementById("notifBadge");
+  (bell && badge) ? ok("bell notifikasi + badge ada") : bad("bell hilang");
+  var groups = window.NOTIF.collect();
+  (Array.isArray(groups) && groups.length>0) ? ok("NOTIF collect "+groups.length+" kelompok") : bad("NOTIF kosong padahal seed ada expiry");
+  var nTot = groups.reduce(function(a,g){return a+g.items.length;},0);
+  // buka panel, harus ada modal dengan daftar
+  window.NOTIF.open();
+  /Pusat Notifikasi/.test(window.document.querySelector(".modal").textContent) ? ok("panel notifikasi terbuka") : bad("panel notifikasi gagal");
+  window.PSV.closeModal();
+  // S5 taut Simper↔Manpower
+  window.PSV.renderModule(window.PS_MODULES.sertifikasi);
+  window.document.querySelector('#view [data-a="add"]').click();
+  var dl = window.document.getElementById("dl-manpower");
+  var names = window.PS.all("manpower").filter(function(p){return p.status==="Aktif";}).map(function(p){return p.nama;});
+  (dl && dl.children.length===names.length) ? ok("Simper autocomplete "+names.length+" nama aktif") : bad("datalist Simper: "+(dl?dl.children.length:0)+" vs "+names.length);
+  var sNama = window.document.querySelector('.modal [name="nama"]');
+  sNama.value="TIDAK-ADA-XYZ"; sNama.dispatchEvent(new window.Event("input",{bubbles:true}));
+  await new Promise((r)=>setTimeout(r,50));
+  /tidak ada di Manpower/i.test(window.document.getElementById("sertHint").textContent) ? ok("hint Simper: tak tertaut") : bad("hint Simper hilang");
+  var c0s = window.PS.count("sertifikasi");
+  window.document.querySelector(".modal [data-ok]").click();
+  window.PS.count("sertifikasi")===c0s ? ok("Simper validasi block nama asing") : bad("Simper lolos tanpa manpower");
+  sNama.value = names[0]; sNama.dispatchEvent(new window.Event("input",{bubbles:true}));
+  await new Promise((r)=>setTimeout(r,50));
+  /Aktif/.test(window.document.getElementById("sertHint").textContent) ? ok("hint Simper: tertaut Aktif") : bad("hint tertaut gagal");
+  window.document.querySelector('.modal [name="no"]').value="SMP-TEST-001";
+  // isi tanggal berlakunya
+  var expInp = window.document.querySelector('.modal [name="exp"]'); if(expInp && !expInp.value) expInp.value="2027-12-31";
+  window.document.querySelector(".modal [data-ok]").click();
+  window.PS.count("sertifikasi")===c0s+1 ? ok("Simper tertaut tersimpan") : bad("Simper tertaut gagal");
+  var newId = window.PS.all("sertifikasi").find(function(r){return r.no==="SMP-TEST-001";});
+  if(newId){
+    window.PSV.renderModule(window.PS_MODULES.sertifikasi);
+    window.document.querySelectorAll('[data-a="view"]')[0].click();
+    /Taut Manpower/.test(window.document.querySelector(".modal").textContent) ? ok("detail Simper tampil taut Manpower") : bad("detail taut gagal");
+    window.PSV.closeModal();
+    window.PS.del("sertifikasi", newId.id);
+    // juga cek balik: detail manpower tampil sertifikasi tertaut
+    var mp0 = window.PS.all("manpower").find(function(p){return p.nama===names[0];});
+    window.PSV.renderModule(window.PS_MODULES.manpower);
+    // cari baris mp0 lalu view
+    var mpRows = window.PS.all("manpower");
+    var idx = mpRows.findIndex(function(p){return p.id===mp0.id;});
+    // simpan sert lagi untuk uji balik
+    var tmpS={id:window.PS.uid("SRT"),nama:names[0],jenis:"Simper",no:"SMP-CHECK",terbit:"2026-09-12",exp:"2027-12-31",ket:"uji taut balik"};
+    window.PS.put("sertifikasi", tmpS);
+    window.PSV.renderModule(window.PS_MODULES.manpower);
+    window.document.querySelectorAll('[data-a="view"]')[idx].click();
+    /Sertifikasi tertaut/.test(window.document.querySelector(".modal").textContent) ? ok("detail Manpower tampil sertifikasi tertaut") : bad("taut balik gagal");
+    window.PSV.closeModal(); window.PS.del("sertifikasi", tmpS.id);
+  }
+  // tutup modal sert sisa
+  if(window.document.querySelector(".modal")) window.PSV.closeModal();
+} catch (e) { bad("fitur baru: "+(e && e.message)); }
+
 console.log(fail ? `\nDOM-TEST: FAIL (${fail})` : `\nDOM-TEST: PASS (${pass} checks)`);
 if (errors.length) console.log("js errors tambahan: " + errors.slice(0, 3).join(" | "));
 process.exit(fail ? 1 : 0);

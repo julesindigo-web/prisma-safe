@@ -51,35 +51,37 @@ SOS darurat (tombol mengambang + GPS + bagikan) • SMKP Analytics (LTIFR/
 TRIFR/SR, heatmap, matriks kompetensi, paket Kepmen 1827) • Permit +
 approval multi-level + TTD digital + LOTO • RCA 5Whys/Fishbone/SCAT-lite.
 
-## Ekspor (rapi & presisi)
+## Ekspor & Impor (rapi & presisi)
 
-CSV (delimiter `;`) • Excel `.xlsx` **penuh offline** (SheetJS di-vendor-kan di
-`js/vendor/`, CDN hanya fallback darurat) • Cetak/PDF berkop + tanda tangan •
-Lembar per-baris • Backup JSON • Excel semua-modul • Ringkasan eksekutif.
-Semua ekspor tabel/baris kini memuat kolom **ID** (telusur audit), **Foto**
-(jumlah foto temuan), dan **Update** (cap waktu) — presisi dan lengkap.
+CSV (delimiter `;`) • Excel `.xlsx` **penuh offline** (SheetJS di-vendor-kan) •
+**Template per modul** (header + baris contoh + petunjuk pilihan) • **Import massal**
+(pilih .xlsx → validasi req & opsi → pratinjau 5 baris → impor 200 baris/file, RBAC)
+• Cetak/PDF berkop + tanda tangan • Lembar per-baris • Backup JSON •
+Excel semua-modul • Ringkasan eksekutif. Semua ekspor tabel/baris kini memuat
+kolom **ID**, **Foto** dan **Update** — presisi dan lengkap. Filter tanggal Dari/s/d
+di tiap tabel yang punya tanggal, ikut ke ekspor/cetak yang terfilter.
 
-## Berkas & foto
+## Berkas & foto + notifikasi + taut silang
 
-Setiap baris di semua 25 modul punya tombol **Berkas**: unggah foto bukti
-(dikompresi otomatis di perangkat), PDF, lembar kerja, video pendek.
-Modul temuan (laporan, inspeksi, PICA, insiden, IBPR, P2H, unit, SOS) punya
-kolom **Foto temuan** khusus (maks 3, tampil di detail + tercetak di lembar).
-Batas aman: 15 MB/berkas, inline ≤700 KB selebihnya ke IndexedDB,
-executable (.exe/.bat/.ps1/dsb) ditolak, pagu rekor ~2 MB. Peran Auditor
-read-only (boleh membuka/mengunduh, tak boleh menambah/menghapus).
+Setiap baris di semua 25 modul punya tombol **Berkas** + kolom **Foto temuan**
+(maks 3) pada 8 modul temuan. Di bar atas ada **bell Notifikasi** (badge) yang
+mengumpulkan expiry ≤30h, Breakdown, PICA overdue, hazard tinggi & SOS terbuka —
+klik untuk panel + lompat ke modul. **Sertifikasi ↔ Manpower** tertaut:
+autocomplete nama dari Manpower Aktif, validasi blok bila tak tertaut, detail
+dua-arah (sertifikasi tampil jabatan Manpower, Manpower tampil sertifikasi tertaut).
 
-## Cakupan uji (95 checks, `npm test`)
+## Cakupan uji (112 checks, `npm test`)
 
 `npm install` sekali, lalu `npm test` (jsdom, hermetik tanpa internet)
 dan `npm run check` (gerbang rilis). Yang diuji: boot, 25/25 modul render,
-CRUD penuh + validasi + paginasi + filter + format tanggal, isi CSV (BOM +
-header), XLSX, semua jalur cetak, backup/restore/reset, P2H end-to-end +
-auto-breakdown, approval PTW L1→L2→L3 + tolak + gate KTT, LOTO ±negatif,
-RCA simpan/cetak, SOS penuh, muster benar/salah kode, fatigue/tele/hazard
-compute, LTIFR jujur ±MH, SMKP + Kepmen + periode, unggah teks/gambar +
-tolak exe + pagu 15 MB + fallback IDB, RBAC 2 peran, audit valid + tamper,
-outbox + drain offline, rute liar, filter nav, Mode Mudah.
+CRUD penuh + validasi + paginasi + filter + format tanggal, **filter tanggal Dari/s/d**,
+isi CSV (BOM + header), XLSX, **template & import round-trip**, semua jalur cetak,
+backup/restore/reset, P2H end-to-end + auto-breakdown, approval PTW L1→L2→L3 +
+tolak + gate KTT, LOTO ±negatif, RCA simpan/cetak, SOS penuh, muster benar/salah kode,
+fatigue/tele/hazard compute, LTIFR jujur ±MH, SMKP + Kepmen + periode + **tren 12 bulan**,
+unggah teks/gambar + tolak exe + pagu + fallback IDB, RBAC 2 peran, audit valid + tamper,
+outbox + drain, **bell notifikasi + panel**, **taut Simper↔Manpower dua-arah**, rute liar,
+filter nav, Mode Mudah.
 Butuh browser/perangkat nyata: gambar/kanvas asli, GPS/kamera, SW lifecycle,
 Vercel runtime, multi-pengguna, kuota penyimpanan.
 
@@ -88,12 +90,12 @@ Vercel runtime, multi-pengguna, kuota penyimpanan.
 ```
 index.html  offline.html  manifest.webmanifest  sw.js
 vercel.json  package.json  README.md
-api/health.js  api/sync.js  scripts/check.mjs
+api/health.js  api/sync.js  scripts/check.mjs  scripts/domtest.mjs
 icons/ (192, 512, maskable, apple-touch, favicon)
 css/app.css
-js/seed.js js/idb.js js/store.js js/audit.js js/rbac.js js/sync.js
+js/seed.js js/icons.js js/idb.js js/store.js js/audit.js js/rbac.js js/sync.js
 js/exports.js js/schema.js js/views.js js/dashboard.js js/hazard.js
-js/ptw.js js/rca.js js/smkp.js js/sos.js js/app.js js/pwa.js
+js/ptw.js js/rca.js js/smkp.js js/sos.js js/notify.js js/import.js js/files.js js/app.js js/pwa.js
 js/vendor/xlsx.full.min.js (Excel offline)
 ```
 

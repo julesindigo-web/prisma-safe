@@ -14,12 +14,18 @@ function openModal(title,bodyHTML,footHTML){ var r=document.getElementById("moda
   r.querySelector(".mback").addEventListener("mousedown",function(e){ if(e.target.className==="mback") closeModal(); });
   return r.querySelector(".modal"); }
 function closeModal(){ document.getElementById("modalRoot").innerHTML=""; }
-function fieldInput(f,val,rec){
+function fieldInput(f,val,rec,def){
   var v = val==null?(f.def==null?"":f.def):val, req=f.req?' <span class="req">*</span>':"";
+  var isSertNama = def && def.key==="sertifikasi" && f.k==="nama";
   var h='<div class="fld" data-f="'+f.k+'"><label>'+esc(f.label)+req+'</label>';
   if(f.t==="textarea") h+='<textarea name="'+f.k+'">'+esc(v)+'</textarea>';
   else if(f.t==="select") h+='<select name="'+f.k+'">'+f.opts.map(function(o){return '<option '+(String(o)===String(v)?"selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';
   else if(f.t==="photo") h+='<input type="file" data-ph="'+f.k+'" accept="image/*" multiple>';
+  else if(isSertNama){
+    var names = window.PS.all("manpower").filter(function(p){return p.status==="Aktif";}).map(function(p){return p.nama;});
+    h+='<input name="'+f.k+'" list="dl-manpower" value="'+esc(v)+'" placeholder="Ketik nama — pilih dari Manpower Aktif" autocomplete="off">'
+      +'<datalist id="dl-manpower">'+names.map(function(n){return '<option value="'+esc(n)+'">';}).join("")+'</datalist>';
+  }
   else h+='<input name="'+f.k+'" type="'+(f.t==="date"?"date":f.t==="number"?"number":"text")+'" value="'+esc(v)+'"'+(f.t==="number"?' min="0"':"")+'>';
   if(f.hint) h+='<div class="hint">'+esc(f.hint)+'</div>';
   h+='<div class="err">Wajib diisi.</div>';
@@ -35,10 +41,19 @@ function readForm(modal,fields){ var obj={}, ok=true;
     if(f.req&&String(v).trim()===""){ ok=false; el.closest(".fld").classList.add("bad"); } else if(el) el.closest(".fld").classList.remove("bad");
     obj[f.k]=typeof v==="string"?v.trim():v; });
   return {obj:obj,ok:ok}; }
-function state(mod){ window._psui=window._psui||{}; window._psui[mod]=window._psui[mod]||{q:"",f:"",pg:0}; return window._psui[mod]; }
+function state(mod){ window._psui=window._psui||{}; window._psui[mod]=window._psui[mod]||{q:"",f:"",pg:0,d1:"",d2:""}; return window._psui[mod]; }
+function dateKeyOf(def){ var f=def.fields.find(function(x){ return x.t==="date"; }); if(f) return f.k;
+  var cands=["tgl","waktu","bulan","berlaku","sejak","mulai","selesai","terbit","exp"];
+  for(var i=0;i<cands.length;i++) if(def.fields.some(function(x){return x.k===cands[i];})) return cands[i];
+  return ""; }
 function filteredRows(def){ var st=state(def.key), rows=PS.all(def.key);
   if(st.q){ var q=st.q.toLowerCase(); rows=rows.filter(function(r){ return def.search.some(function(k){return String(r[k]==null?"":r[k]).toLowerCase().indexOf(q)>=0;}); }); }
   if(st.f){ rows=rows.filter(function(r){ return ["status","hasil","kat","jenis","sifat"].some(function(k){return String(r[k])===st.f;}); }); }
+  var dk=dateKeyOf(def);
+  if(dk && (st.d1||st.d2)){
+    var a=st.d1||"0000-01-01", b=st.d2||"9999-12-31";
+    rows=rows.filter(function(r){ var v=String(r[dk]||"").slice(0,10); if(!/^\d{4}-\d{2}/.test(v)) return true; return v>=a && v<=b; });
+  }
   return rows; }
 function statusOptions(def){ var set={}, out=[];
   PS.all(def.key).forEach(function(r){ ["status","hasil","kat","jenis"].forEach(function(k){ if(r[k]) set[r[k]]=1; }); });
@@ -54,8 +69,13 @@ function renderModule(def){
   var h='<div class="card"><h2>'+esc(def.title)+' <span class="chip grey">'+esc(def.form)+'</span></h2><p class="sub">'+esc(def.sub)+'</p>';
   h+='<div class="toolbar no-print"><input type="search" id="q" placeholder="Cari data…" value="'+esc(st.q)+'" aria-label="Cari">';
   if(sopts.length) h+='<select id="fq" aria-label="Filter"><option value="">Semua status/kategori</option>'+sopts.map(function(o){return '<option '+(st.f===o?"selected":"")+'>'+esc(o)+'</option>';}).join("")+'</select>';
-  h+='<button class="btn sm" data-a="csv">'+window.ic("download","ic-14")+'CSV</button><button class="btn sm" data-a="xlsx">'+window.ic("download","ic-14")+'Excel</button><button class="btn sm" data-a="print">'+window.ic("printer","ic-14")+'Cetak/PDF</button><span style="flex:1"></span>';
-  if(!window.RBAC || window.RBAC.can("add")) h+='<button class="btn primary" data-a="add">'+window.ic("plus","ic-14")+'Tambah</button>';
+  var dk=dateKeyOf(def);
+  if(dk) h+='<label class="hint" style="margin:0 4px">Dari</label><input type="date" id="d1" value="'+esc(st.d1)+'" aria-label="Dari"><label class="hint" style="margin:0 4px">s/d</label><input type="date" id="d2" value="'+esc(st.d2)+'" aria-label="Sampai">';
+  h+='<button class="btn sm" data-a="csv">'+window.ic("download","ic-14")+'CSV</button><button class="btn sm" data-a="xlsx">'+window.ic("download","ic-14")+'Excel</button><button class="btn sm" data-a="print">'+window.ic("printer","ic-14")+'Cetak/PDF</button>';
+  if(!window.RBAC || window.RBAC.can("add")){
+    h+='<button class="btn sm" data-a="tpl">'+window.ic("dokumen","ic-14")+'Template</button><button class="btn sm" data-a="imp">'+window.ic("upload","ic-14")+'Import</button>';
+    h+='<span style="flex:1"></span><button class="btn primary" data-a="add">'+window.ic("plus","ic-14")+'Tambah</button>';
+  } else h+='<span style="flex:1"></span>';
   h+='</div>';
   if(!page.length) h+='<div class="empty">'+window.ic("shield","ic-40")+'<p>'+esc(def.empty)+'</p></div>';
   else{ h+='<div class="tbl-wrap"><table class="tbl"><thead><tr><th>No</th>'+def.cols.map(function(c){return "<th>"+esc(c.label)+"</th>";}).join("")+'<th class="no-print">Aksi</th></tr></thead><tbody>';
@@ -71,6 +91,9 @@ function renderModule(def){
   var el=document.getElementById("view"); el.innerHTML=h;
   el.querySelector("#q").addEventListener("input",function(e){ st.q=e.target.value; st.pg=0; renderModule(def); keepFocus("q"); });
   var fq=el.querySelector("#fq"); if(fq) fq.addEventListener("change",function(e){ st.f=e.target.value; st.pg=0; renderModule(def); });
+  var d1=el.querySelector("#d1"), d2=el.querySelector("#d2");
+  if(d1) d1.addEventListener("change",function(e){ st.d1=e.target.value; st.pg=0; renderModule(def); });
+  if(d2) d2.addEventListener("change",function(e){ st.d2=e.target.value; st.pg=0; renderModule(def); });
   el.querySelectorAll("[data-a]").forEach(function(b){ b.onclick=function(){ act(def,b.dataset.a,b.dataset.id); }; });
   document.getElementById("pageTitle").textContent=def.title;
   document.getElementById("pageSub").textContent=def.form+" • "+rows.length+" data";
@@ -81,6 +104,8 @@ function exportCols(def){ var cols=[{label:"ID",get:function(r){ return r.id||"-
   cols.push({label:"Update",get:function(r){ if(!r._u) return "-"; try{ var d=new Date(r._u); return d.toLocaleDateString("id-ID") + " " + d.toLocaleTimeString("id-ID"); }catch(_){ return "-"; } }});
   return cols; }
 function act(def,a,id){
+  if(a==="tpl"){ window.IMPORT.template(def); return; }
+  if(a==="imp"){ window.IMPORT.open(def); return; }
   var need = (a==="add") ? "add" : (a==="edit" || a==="cek") ? "edit" : (a==="del") ? "del" : (a.indexOf("x:") === 0 ? "edit" : null);
   if(need && window.RBAC && !window.RBAC.can(need)){ toast(window.RBAC.deny(a === "del" ? "menghapus" : "mengubah") + " [modul " + def.title + "]", "err"); return; }
   var rows=filteredRows(def), cols=exportCols(def);
@@ -105,13 +130,27 @@ function riskNote(def,rec){ /* catatan risiko live untuk IBPR */
   return '<div class="card" style="background:var(--tint)"><b>Matriks 5×5 — </b>Risiko awal: <b>'+a+' • '+lvl(a)+'</b> → Risiko sisa: <b>'+b+' • '+lvl(b)+'</b> <span class="hint">Skor = Likelihood × Severity.</span></div>'; }
 function formModal(def,rec){
   var isNew=!rec; rec=rec||{};
-  if(isNew){ rec={}; def.fields.forEach(function(f){ rec[f.k]=f.def==null?"":f.def; }); if(def.fields.find(function(f){return f.k==="tgl";})) rec.tgl=PS.today(); if(def.fields.find(function(f){return f.k==="status";})) rec.status=def.fields.find(function(f){return f.k==="status";}).opts[0]; }
+  if(isNew){ rec={}; def.fields.forEach(function(f){ rec[f.k]=f.def==null?"":f.def; });   if(def.fields.find(function(f){return f.k==="tgl";})) rec.tgl=PS.today(); if(def.fields.find(function(f){return f.k==="status";})) rec.status=def.fields.find(function(f){return f.k==="status";}).opts[0]; }
   var m=openModal((isNew?"Tambah — ":"Ubah — ")+def.title,
-    riskNote(def,rec)+'<div class="frow">'+def.fields.map(function(f){return fieldInput(f,rec[f.k],rec);}).join("")+'</div>',
+    riskNote(def,rec)+'<div class="frow">'+def.fields.map(function(f){return fieldInput(f,rec[f.k],rec,def);}).join("")+'</div>',
     '<button class="btn" data-x2>Batal</button><button class="btn primary" data-ok="">'+window.ic("check","ic-16")+'Simpan</button>');
   m.querySelector("[data-x2]").onclick=closeModal;
   var nilai=m.querySelector('[name="nilai"]'), hasil=m.querySelector('[name="hasil"]');
   if(nilai&&hasil) nilai.addEventListener("input",function(){ var n=+nilai.value||0; hasil.value=n>=80?"Lulus":n>0?"Remedial":"Belum test"; });
+  if(def.key==="sertifikasi"){
+    var sNama=m.querySelector('[name="nama"]');
+    if(sNama){
+      var hint=document.createElement("div"); hint.className="hint"; hint.id="sertHint"; sNama.parentNode.appendChild(hint);
+      function checkSert(){
+        var v=sNama.value.trim(), mp=window.PS.all("manpower").find(function(p){return p.nama===v;});
+        if(!v){ hint.textContent="Pilih dari Manpower Aktif — ketik untuk cari."; hint.style.color="var(--mut)"; return; }
+        if(!mp){ hint.textContent="Nama tidak ada di Manpower Aktif — sertifikasi tak tertaut."; hint.style.color="var(--red)"; }
+        else if(mp.status!=="Aktif"){ hint.textContent="Personil status "+mp.status+" — bukan Aktif."; hint.style.color="var(--red)"; }
+        else { hint.textContent="✓ "+mp.jabatan+" • "+mp.dept+" • "+mp.status; hint.style.color="#15803d"; }
+      }
+      sNama.addEventListener("input", checkSert); sNama.addEventListener("change", checkSert); checkSert();
+    }
+  }
   if(def.key==="ibpr"){ ["l0","s0","l1","s1"].forEach(function(k){ var el=m.querySelector('[name="'+k+'"]'); if(el) el.addEventListener("change",function(){ var r=readForm(m,def.fields).obj; m.querySelector(".mbody").insertAdjacentHTML("afterbegin",""); closeModal(); formModal(def,Object.assign({},rec,r)); }); }); }
   def.fields.filter(function(f){ return f.t === "photo"; }).forEach(function(f){
     var inp=m.querySelector('[data-ph="'+f.k+'"]'), th=m.querySelector('[data-th="'+f.k+'"]');
@@ -149,6 +188,20 @@ function detailModal(def,r){ if(!r) return;
     extra='<h3>Penilaian risiko (matriks 5×5)</h3><p>Awal: <b>'+a+' • '+S0.level(a)[0]+'</b> → Sisa: <b>'+b+' • '+S0.level(b)[0]+'</b></p>'; }
   if(def.key==="p2h"&&r._cek){ extra='<h3>Hasil checklist P2H</h3><table class="tbl"><thead><tr><th>Item</th><th>Kondisi</th></tr></thead><tbody>'+
     r._cek.map(function(c){return '<tr><td>'+esc(c[0])+'</td><td>'+(c[1]==="Baik"?'<span class="chip green">Baik</span>':'<span class="chip red">Rusak</span>')+'</td></tr>';}).join("")+'</tbody></table>'; }
+  if(def.key==="sertifikasi"){
+    var mp2=window.PS.all("manpower").find(function(p){return p.nama===r.nama;});
+    if(mp2) extra+='<h3>Taut Manpower</h3><p><b>'+esc(mp2.nama)+'</b> — '+esc(mp2.jabatan||"?")+' • '+esc(mp2.dept||"?")+' • <span class="chip '+(mp2.status==="Aktif"?"green":"amber")+'">'+esc(mp2.status)+'</span></p>';
+    else extra+='<p class="hint">Tidak tertaut ke Manpower Aktif.</p>';
+  }
+  if(def.key==="manpower"){
+    var cs=window.PS.all("sertifikasi").filter(function(c){return c.nama===r.nama;});
+    if(cs.length) extra+='<h3>Sertifikasi tertaut ('+cs.length+')</h3><table class="tbl"><thead><tr><th>Jenis</th><th>Nomor</th><th>Berlaku s/d</th></tr></thead><tbody>'+cs.map(function(c){
+      var d=Math.round((new Date(c.exp+"T00:00:00")-new Date().setHours(0,0,0,0))/86400000);
+      var tone=isNaN(d)?"grey":d<0?"red":d<=30?"amber":"green";
+      return '<tr><td>'+esc(c.jenis)+'</td><td>'+esc(c.no||"—")+'</td><td><span class="chip '+tone+'">'+esc(c.exp||"?")+'</span></td></tr>';
+    }).join("")+'</tbody></table>';
+    else extra+='<p class="hint">Belum ada sertifikasi tertaut.</p>';
+  }
   if(def.key==="induksi"&&r.nilai!==""&&r.nilai!=null) extra='<p>Status kelulusan: <b>'+(+r.nilai>=80?"LULUS (≥80)":"REMEDIAL (<80)")+'</b></p>';
   if((r._files||[]).length){ extra+='<h3>Berkas terlampir ('+r._files.length+')</h3><p>'+r._files.map(function(f){ return window.esc(f.name||"berkas"); }).join("; ")+'</p><p class="hint">Buka / unduh / kelola via tombol “Berkas” pada baris data.</p>'; }
   def.fields.filter(function(f){ return f.t === "photo"; }).forEach(function(f){ var ph=r[f.k]||[];

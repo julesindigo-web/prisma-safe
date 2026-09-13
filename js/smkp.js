@@ -74,6 +74,40 @@ function expiring(){
   return '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Personel — dokumen</th><th>Status</th></tr></thead><tbody>' +
     out.slice(0, 30).map(function(x){ return "<tr><td>" + esc(x[0]) + "</td><td><span class='chip " + (x[1] < 0 ? "red" : "amber") + "'>" + (x[1] < 0 ? "KEDALUWARSA" : x[1] + " hari") + "</span></td></tr>"; }).join("") + "</tbody></table></div>";
 }
+function trend(){
+  var now = new Date(); now.setDate(1);
+  var months=[]; for(var i=11;i>=0;i--){ var d=new Date(now); d.setMonth(d.getMonth()-i); months.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")); }
+  var pts = months.map(function(m){ var r=rates(m); return {m:m, ltifr:r.ltifr, trifr:r.trifr, sr:r.sr, mh:r.mh, has:r.hasMH}; });
+  var hasAny = pts.some(function(p){ return p.has; });
+  if(!hasAny) return '<div class="empty">Belum cukup data manhours bulanan untuk tren 12 bulan — isi modul Manhours.</div>';
+  var maxV = 0; pts.forEach(function(p){ if(p.ltifr!=null) maxV=Math.max(maxV,p.ltifr); if(p.trifr!=null) maxV=Math.max(maxV,p.trifr); });
+  maxV = maxV ? Math.ceil(maxV/5)*5 : 5;
+  if(maxV<5) maxV=5;
+  function line(key,color){
+    var d=""; pts.forEach(function(p,i){
+      var v=p[key]; if(v==null) return;
+      var x=40+i*56, y=90 - (v/maxV)*70;
+      d += (d?" L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+    }); return d;
+  }
+  function dots(key,color){
+    return pts.map(function(p,i){
+      var v=p[key]; if(v==null) return "";
+      var x=40+i*56, y=90 - (v/maxV)*70;
+      return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="'+color+'" stroke="#fff" stroke-width="1.2"/>';
+    }).join("");
+  }
+  var grid = [0,0.5,1].map(function(k){ var y=90 - k*70; return '<line x1="40" y1="'+y+'" x2="712" y2="'+y+'" stroke="#e5e9f2" stroke-dasharray="4 4"/>'; }).join("");
+  var labels = pts.map(function(p,i){ return '<text x="'+(40+i*56)+'" y="108" text-anchor="middle" font-size="9" fill="#5b6480">'+esc(p.m.slice(5))+'</text>'; }).join("");
+  var yLabels = [0, maxV/2, maxV].map(function(v){ var y=90 - (v/maxV)*70; return '<text x="34" y="'+(y+3)+'" text-anchor="end" font-size="9" fill="#5b6480">'+v.toFixed(0)+'</text>'; }).join("");
+  return '<div style="overflow:auto"><svg viewBox="0 0 740 120" style="width:100%;min-width:560px;height:120px" role="img" aria-label="Tren LTIFR TRIFR 12 bulan">'
+    +'<rect x="0" y="0" width="740" height="120" rx="10" fill="#fbfcff" stroke="#e5e9f2"/>'
+    +grid + yLabels
+    +'<path d="'+line("ltifr")+'" fill="none" stroke="#d63a3a" stroke-width="2.2" stroke-linejoin="round"/>'+dots("ltifr","#d63a3a")
+    +'<path d="'+line("trifr")+'" fill="none" stroke="#2456d6" stroke-width="2.2" stroke-linejoin="round"/>'+dots("trifr","#2456d6")
+    +labels
+    +'</svg></div><div class="toolbar" style="gap:14px;margin-top:8px"><span class="chip red">● LTIFR</span><span class="chip blue">● TRIFR</span><span class="hint">Skala 0–'+maxV+' • titik kosong = bulan tanpa manhours</span></div>';
+}
 function render(){
   var st = perState(), r = rates(st.bulan), s = r.s;
   var h = '<div class="card"><h2>'+window.ic("smkp","ic-18")+'SMKP Analytics & KPI</h2><p class="sub">Laju dihitung jujur dari Manhours yang diinput — tanpa MH, laju tampil “—”.</p>'
@@ -89,6 +123,7 @@ function render(){
     + (r.hasMH || !st.bulan ? "" : '<div class="card"><b>'+window.ic("incident","ic-16")+' Manhours periode ' + esc(st.bulan) + ' belum diinput</b> — isi di modul Manhours agar LTIFR/TRIFR/SR terhitung. <button class="btn sm" onclick="location.hash=\'#/manhours\'">Buka Manhours</button></div>')
     + '<div class="grid g2" style="margin-top:16px"><div class="card"><h2>'+window.ic("pin","ic-18")+'Heatmap lokasi rawan</h2><p class="sub">Bobot: fatality 5, LTI 3, hazard tinggi 3, temuan 1</p>' + heat() + '</div>'
     + '<div class="card"><h2>'+window.ic("clock","ic-18")+'Kedaluwarsa ≤ 30 hari</h2><p class="sub">Simper/KIM/POP/POM/POU/SIO + MCU</p>' + expiring() + '</div></div>'
+    + '<div class="card"><h2>'+window.ic("chart","ic-18")+'Tren LTIFR / TRIFR — 12 bulan terakhir</h2><p class="sub">Garis merah LTIFR, biru TRIFR • butuh manhours bulanan</p>'+trend()+'</div>'
     + '<div class="card"><h2>'+window.ic("users","ic-18")+'Matriks kompetensi</h2><p class="sub">Personel aktif × sertifikasi (tanggal = masa berlaku)</p>' + matrix() + '</div>';
   document.getElementById("view").innerHTML = h;
   document.getElementById("pageTitle").textContent = "SMKP Analytics & KPI";
